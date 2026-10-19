@@ -1,9 +1,11 @@
-# Preface {.unnumbered}
+# Primeros pasos
 
-This is a Quarto book.
-
-To learn more about Quarto books visit <https://quarto.org/docs/books>.
+Para armar el ambiente de trabajo voy a hacer la siguiente estrucura de carpetas
 
 ```{r}
-1 + 1
+dir.create("data/raw", recursive = TRUE)
+dir.create("data/processed", recursive = TRUE)
+dir.create("notebooks")
+dir.create("R")
+dir.create("outputs")
 ```

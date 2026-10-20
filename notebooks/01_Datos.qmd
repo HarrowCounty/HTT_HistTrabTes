@@ -2,7 +2,7 @@
 title: "Datos_Estatales"
 ---
 ```{r}
-#| label: Importación paquteria
+#| label: Importación paquetes
 #| message: false
 library(sf)
 library(readxl)
@@ -60,7 +60,7 @@ print(Datos_DEFENSA |>  filter(ESTADO == "BAJA CALIFORNIA SUR", MUNICIPIO == "GU
 
 ## Estadística descriptiva DEFENSA
 
-### Graficos generales de incautación 
+### Gráficos generales de incautación 
 ```{r}
 #| label: Gráficas Totales y promedios
 #| fig-height: 6
@@ -123,8 +123,8 @@ ggplot(total_promedio, aes(x=reorder(ESTADO,-n,FUN=sum),y=n,fill=DROGA))+geom_co
   theme(axis.text.x = element_text(angle = 70, hjust = 1))+labs(x = "Estado", y = "Número de eventos (n)", title = "Frecuencia de incautaciones por estado")
 ```
 
-### Analisis de series de tiempo y tendencia
-Los siguientes graficos son para ver como cambia la incautación de la droga a lo largo de los años o si hay patrones según el mes.
+### Análisis de series de tiempo y tendencia
+Los siguientes gráficos son para ver como cambia la incautación de la droga a lo largo de los años o si hay patrones según el mes.
 
 Para ser mas simples a partir de aquí la exploración de datos solo se hará en el formato Kgs y Lts, dejando fuera las incautaciones en ampolletas y unidades. 
 
@@ -162,12 +162,12 @@ Revisando detalles asombra el tipo de droga de AMAPOLA que solo cuenta con prese
 
 head(Datos_DEFENSA |> filter(DROGA=="AMAPOLA"))
 ```
-Solo hay un registro de amapola, due en el año de 2020 en Querétaro en particular 1.82 Kgs
+Solo hay un registro de amapola, fue en el año de 2020 en Querétaro en particular 1.82 Kgs
 
-Tambien quiero pensar que el pico de metanfetamina en litros en el año 2018 corresponde a una única incautación-registro
+También quiero pensar que el pico de metanfetamina en litros en el año 2018 corresponde a una única incautación-registro
 
 ```{r}
-#| label: oncautación atípica de metanfetamina en LTs
+#| label: incautación atípica de metanfetamina en Lts
 
 head(Datos_DEFENSA |>  filter(DROGA=="METANFETAMINA",AÑO=="2018",LTS.!=0))
 ```
@@ -231,7 +231,7 @@ Ahora vamos a ver como están los nombres de los datos en ambas bases de datos p
 ```{r}
 str(Datos_Esp_Esta)
 
-#En nomgeo está contenido el nombre del estado, vamos a pasarlo a mayuscula
+#En nomgeo está contenido el nombre del estado, vamos a pasarlo a mayúscula
 
 Datos_Esp_Esta$NOMGEO <- toupper(Datos_Esp_Esta$NOMGEO)
 ```
@@ -244,7 +244,7 @@ setdiff(unique(Datos_Esp_Esta$NOMGEO),unique(Datos_DEFENSA$ESTADO))
 print("Los nombres que no coinciden como están en la base de datos de DEFENSA")
 setdiff(unique(Datos_DEFENSA$ESTADO), unique(Datos_Esp_Esta$NOMGEO))
 ```
-Vamos a unificar los nombre en las bases de datos dandole preferencia a sus nombres en la base "principal" de DEFENSA. Las diferencias reace en la acentación y nombres largo/corto.
+Vamos a unificar los nombre en las bases de datos dándole preferencia a sus nombres en la base "principal" de DEFENSA. Las diferencias recae en la acentuación y nombres largo/corto.
 
 ```{r}
 
@@ -268,7 +268,7 @@ setdiff(unique(Datos_DEFENSA$ESTADO),unique(mapa_Estatal$NOMGEO))
 print("Los nombre de los estados coinciden en ambas bases")
 ```
 ### Guardar la base de datos ESTATAL INEGI con nombres unificados a DEFENSA
-La base de datos con los nombres coincidentes a mi base de datos principal de DEFENSA la voy a guardar en processed. Este proceso lo repitiré después para los municipios.
+La base de datos con los nombres coincidentes a mi base de datos principal de DEFENSA la voy a guardar en proceso. Este proceso lo repetiré después para los municipios.
 
 ```{r}
 st_write(mapa_Estatal,"../data/processed/mapa_Estatal.shp",delete_dsn = TRUE)

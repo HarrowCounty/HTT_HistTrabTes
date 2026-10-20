@@ -189,9 +189,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul class="collapse">
   <li><a href="#estadística-descriptiva-defensa" id="toc-estadística-descriptiva-defensa" class="nav-link" data-scroll-target="#estadística-descriptiva-defensa"><span class="header-section-number">5.1</span> Estadística descriptiva DEFENSA</a>
   <ul class="collapse">
-  <li><a href="#graficos-generales-de-incautación" id="toc-graficos-generales-de-incautación" class="nav-link" data-scroll-target="#graficos-generales-de-incautación"><span class="header-section-number">5.1.1</span> Graficos generales de incautación</a></li>
+  <li><a href="#gráficos-generales-de-incautación" id="toc-gráficos-generales-de-incautación" class="nav-link" data-scroll-target="#gráficos-generales-de-incautación"><span class="header-section-number">5.1.1</span> Gráficos generales de incautación</a></li>
   <li><a href="#incautación-por-estado" id="toc-incautación-por-estado" class="nav-link" data-scroll-target="#incautación-por-estado"><span class="header-section-number">5.1.2</span> Incautación por estado</a></li>
-  <li><a href="#analisis-de-series-de-tiempo-y-tendencia" id="toc-analisis-de-series-de-tiempo-y-tendencia" class="nav-link" data-scroll-target="#analisis-de-series-de-tiempo-y-tendencia"><span class="header-section-number">5.1.3</span> Analisis de series de tiempo y tendencia</a></li>
+  <li><a href="#análisis-de-series-de-tiempo-y-tendencia" id="toc-análisis-de-series-de-tiempo-y-tendencia" class="nav-link" data-scroll-target="#análisis-de-series-de-tiempo-y-tendencia"><span class="header-section-number">5.1.3</span> Análisis de series de tiempo y tendencia</a></li>
+  </ul></li>
+  <li><a href="#base-de-datos-espaciales-inegi" id="toc-base-de-datos-espaciales-inegi" class="nav-link" data-scroll-target="#base-de-datos-espaciales-inegi"><span class="header-section-number">5.2</span> Base de datos espaciales INEGI</a>
+  <ul class="collapse">
+  <li><a href="#guardar-la-base-de-datos-estatal-inegi-con-nombres-unificados-a-defensa" id="toc-guardar-la-base-de-datos-estatal-inegi-con-nombres-unificados-a-defensa" class="nav-link" data-scroll-target="#guardar-la-base-de-datos-estatal-inegi-con-nombres-unificados-a-defensa"><span class="header-section-number">5.2.1</span> Guardar la base de datos ESTATAL INEGI con nombres unificados a DEFENSA</a></li>
+  <li><a href="#cruce-de-bases-de-datos" id="toc-cruce-de-bases-de-datos" class="nav-link" data-scroll-target="#cruce-de-bases-de-datos"><span class="header-section-number">5.2.2</span> Cruce de bases de datos</a></li>
   </ul></li>
   </ul></li>
   </ul>
@@ -385,8 +390,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>2360 Kilogramos de droga han sido incautados en GUERRERO NEGRO BAJA CALIFORNIA SUR en el histórico de la base de datos Enero 2005- DICIEMBRE 2025.</p>
 <section id="estadística-descriptiva-defensa" class="level2" data-number="5.1">
 <h2 data-number="5.1" class="anchored" data-anchor-id="estadística-descriptiva-defensa"><span class="header-section-number">5.1</span> Estadística descriptiva DEFENSA</h2>
-<section id="graficos-generales-de-incautación" class="level3" data-number="5.1.1">
-<h3 data-number="5.1.1" class="anchored" data-anchor-id="graficos-generales-de-incautación"><span class="header-section-number">5.1.1</span> Graficos generales de incautación</h3>
+<section id="gráficos-generales-de-incautación" class="level3" data-number="5.1.1">
+<h3 data-number="5.1.1" class="anchored" data-anchor-id="gráficos-generales-de-incautación"><span class="header-section-number">5.1.1</span> Gráficos generales de incautación</h3>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>total_promedio <span class="ot">&lt;-</span> Datos_DEFENSA <span class="sc">|&gt;</span> <span class="fu">group_by</span>(AÑO,DROGA,ESTADO) <span class="sc">|&gt;</span> <span class="fu">summarise</span>(</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Total_Kg  =</span> <span class="fu">sum</span>(KGS.,<span class="at">na.rm =</span> <span class="cn">TRUE</span>), </span>
@@ -464,9 +469,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="analisis-de-series-de-tiempo-y-tendencia" class="level3" data-number="5.1.3">
-<h3 data-number="5.1.3" class="anchored" data-anchor-id="analisis-de-series-de-tiempo-y-tendencia"><span class="header-section-number">5.1.3</span> Analisis de series de tiempo y tendencia</h3>
-<p>Los siguientes graficos son para ver como cambia la incautación de la droga a lo largo de los años o si hay patrones según el mes.</p>
+<section id="análisis-de-series-de-tiempo-y-tendencia" class="level3" data-number="5.1.3">
+<h3 data-number="5.1.3" class="anchored" data-anchor-id="análisis-de-series-de-tiempo-y-tendencia"><span class="header-section-number">5.1.3</span> Análisis de series de tiempo y tendencia</h3>
+<p>Los siguientes gráficos son para ver como cambia la incautación de la droga a lo largo de los años o si hay patrones según el mes.</p>
 <p>Para ser mas simples a partir de aquí la exploración de datos solo se hará en el formato Kgs y Lts, dejando fuera las incautaciones en ampolletas y unidades.</p>
 <div class="cell" data-fig-high="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>incautacion_anual <span class="ot">&lt;-</span> Datos_DEFENSA <span class="sc">|&gt;</span> <span class="fu">group_by</span>(AÑO,DROGA) <span class="sc">|&gt;</span>  <span class="fu">summarise</span>(</span>
@@ -507,8 +512,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 1 2020  NOVIEMBRE QUERETARO QUERETARO AMAPOLA        NA  1.82    NA       NA</code></pre>
 </div>
 </div>
-<p>Solo hay un registro de amapola, due en el año de 2020 en Querétaro en particular 1.82 Kgs</p>
-<p>Tambien quiero pensar que el pico de metanfetamina en litros en el año 2018 corresponde a una única incautación-registro</p>
+<p>Solo hay un registro de amapola, fue en el año de 2020 en Querétaro en particular 1.82 Kgs</p>
+<p>También quiero pensar que el pico de metanfetamina en litros en el año 2018 corresponde a una única incautación-registro</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(Datos_DEFENSA <span class="sc">|&gt;</span>  <span class="fu">filter</span>(DROGA<span class="sc">==</span><span class="st">"METANFETAMINA"</span>,AÑO<span class="sc">==</span><span class="st">"2018"</span>,LTS.<span class="sc">!=</span><span class="dv">0</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -524,22 +529,47 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>Pues no, se debe a varias, la de mayor importancia son 2018 FEBRERO DURANGO TAMAZULA y 2018 ENERO SINALOA CULIACAN.</p>
+<div class="cell" data-fig-heigth="14" data-fig-weigh="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>datos_bplt <span class="ot">&lt;-</span> Datos_DEFENSA </span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(datos_bplt,<span class="fu">aes</span>(<span class="at">x=</span><span class="fu">factor</span>(AÑO),<span class="at">y=</span>KGS.,<span class="at">fill =</span> DROGA))<span class="sc">+</span><span class="fu">geom_boxplot</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>)<span class="sc">+</span><span class="fu">facet_wrap</span>(<span class="sc">~</span>DROGA,<span class="at">scales=</span><span class="st">"free_y"</span>,<span class="at">ncol=</span><span class="dv">3</span>)<span class="sc">+</span><span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">hjust =</span> <span class="dv">1</span>))<span class="sc">+</span><span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribución anual de incautaciones por tipo de droga"</span>,</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Año"</span>,<span class="at">y =</span> <span class="st">"Kilogramos asegurados"</span>)<span class="sc">+</span><span class="fu">scale_y_continuous</span>(<span class="at">trans =</span> <span class="fu">pseudo_log_trans</span>(<span class="at">base =</span> <span class="dv">10</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 445 rows containing non-finite outside the scale range
+(`stat_boxplot()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="01_Datos_files/figure-html/boxplot incautaciones por año-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>meses_ordenados <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"ENERO"</span>, <span class="st">"FEBRERO"</span>, <span class="st">"MARZO"</span>, <span class="st">"ABRIL"</span>, <span class="st">"MAYO"</span>, <span class="st">"JUNIO"</span>,</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"JULIO"</span>, <span class="st">"AGOSTO"</span>, <span class="st">"SEPTIEMBRE"</span>, <span class="st">"OCTUBRE"</span>, <span class="st">"NOVIEMBRE"</span>, <span class="st">"DICIEMBRE"</span></span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>incautacion_mensual <span class="ot">&lt;-</span> Datos_DEFENSA <span class="sc">|&gt;</span>  <span class="fu">group_by</span>(MES,DROGA) <span class="sc">|&gt;</span> <span class="fu">summarise</span>(</span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">Kgs_M =</span> <span class="fu">sum</span>(KGS., <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">Lts_M =</span> <span class="fu">sum</span>(LTS., <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">.groups =</span> <span class="st">"drop"</span></span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">MES =</span> <span class="fu">factor</span>(MES, <span class="at">levels =</span> meses_ordenados))</span>
-<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(incautacion_mensual, <span class="fu">aes</span>(<span class="at">x=</span>MES, <span class="at">y=</span>Kgs_M, <span class="at">fill =</span> DROGA))<span class="sc">+</span></span>
-<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">"white"</span>, <span class="at">linewidth =</span> <span class="fl">0.2</span>)<span class="sc">+</span></span>
-<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_polar</span>(<span class="at">theta =</span> <span class="st">"x"</span>)<span class="sc">+</span><span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Patrón cíclico mensual de incautaciones"</span>,<span class="at">x =</span> <span class="cn">NULL</span>,</span>
-<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Kilogramos asegurados"</span>)<span class="sc">+</span><span class="fu">facet_wrap</span>(<span class="sc">~</span> DROGA, <span class="at">scales =</span> <span class="st">"free_y"</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>meses_ordenados <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"ENERO"</span>, <span class="st">"FEBRERO"</span>, <span class="st">"MARZO"</span>, <span class="st">"ABRIL"</span>, <span class="st">"MAYO"</span>, <span class="st">"JUNIO"</span>,</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"JULIO"</span>, <span class="st">"AGOSTO"</span>, <span class="st">"SEPTIEMBRE"</span>, <span class="st">"OCTUBRE"</span>, <span class="st">"NOVIEMBRE"</span>, <span class="st">"DICIEMBRE"</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>incautacion_mensual <span class="ot">&lt;-</span> Datos_DEFENSA <span class="sc">|&gt;</span>  <span class="fu">group_by</span>(MES,DROGA) <span class="sc">|&gt;</span> <span class="fu">summarise</span>(</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">Kgs_M =</span> <span class="fu">sum</span>(KGS., <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">Lts_M =</span> <span class="fu">sum</span>(LTS., <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">MES =</span> <span class="fu">factor</span>(MES, <span class="at">levels =</span> meses_ordenados))</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>IM1<span class="ot">&lt;-</span><span class="fu">ggplot</span>(incautacion_mensual, <span class="fu">aes</span>(<span class="at">x=</span>MES, <span class="at">y=</span>Kgs_M, <span class="at">fill =</span> DROGA))<span class="sc">+</span></span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">"white"</span>, <span class="at">linewidth =</span> <span class="fl">0.2</span>)<span class="sc">+</span></span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_polar</span>(<span class="at">theta =</span> <span class="st">"x"</span>)<span class="sc">+</span><span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Patrón cíclico mensual de incautaciones"</span>,<span class="at">x =</span> <span class="cn">NULL</span>,</span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Kilogramos asegurados"</span>)<span class="sc">+</span><span class="fu">facet_wrap</span>(<span class="sc">~</span> DROGA, <span class="at">scales =</span> <span class="st">"free_y"</span>) </span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>IM2<span class="ot">&lt;-</span><span class="fu">ggplot</span>(incautacion_mensual, <span class="fu">aes</span>(<span class="at">x=</span>MES, <span class="at">y=</span>Lts_M, <span class="at">fill =</span> DROGA))<span class="sc">+</span></span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">"white"</span>, <span class="at">linewidth =</span> <span class="fl">0.2</span>)<span class="sc">+</span></span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_polar</span>(<span class="at">theta =</span> <span class="st">"x"</span>)<span class="sc">+</span><span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Patrón cíclico mensual de incautaciones"</span>,<span class="at">x =</span> <span class="cn">NULL</span>,</span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Litros asegurados"</span>)<span class="sc">+</span><span class="fu">facet_wrap</span>(<span class="sc">~</span> DROGA, <span class="at">scales =</span> <span class="st">"free_y"</span>) </span>
+<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a>IM1<span class="sc">+</span>IM2</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -548,6 +578,126 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+</section>
+</section>
+<section id="base-de-datos-espaciales-inegi" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="base-de-datos-espaciales-inegi"><span class="header-section-number">5.2</span> Base de datos espaciales INEGI</h2>
+<p>La base de datos del INEGI compone datos Estatales y datos Municipales, primero trataremos los datos en su forma estatal.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>ruta_datos_Estatal <span class="ot">&lt;-</span> <span class="fu">here</span>(<span class="st">"data"</span>,<span class="st">"raw"</span>,<span class="st">"Datos_Mapas"</span>,<span class="st">"00ent.shp"</span>)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>Datos_Esp_Esta <span class="ot">&lt;-</span> <span class="fu">st_read</span>(ruta_datos_Estatal)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Reading layer `00ent' from data source 
+  `C:\Users\fismo\OneDrive\Documents\Tesis\HTT_HistTrabTes\data\raw\Datos_Mapas\00ent.shp' 
+  using driver `ESRI Shapefile'
+Simple feature collection with 32 features and 3 fields
+Geometry type: MULTIPOLYGON
+Dimension:     XY
+Bounding box:  xmin: 911292 ymin: 319149.1 xmax: 4083063 ymax: 2349615
+Projected CRS: MEXICO_ITRF_2008_LCC</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(Datos_Esp_Esta)<span class="sc">+</span><span class="fu">geom_sf</span>()<span class="sc">+</span><span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Mapa simple para ver la división estatal"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="01_Datos_files/figure-html/Lectura de datos Estatales-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Ahora vamos a ver como están los nombres de los datos en ambas bases de datos puesto a que tenemos que preparar un cruce entre ambas bases.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(Datos_Esp_Esta)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Classes 'sf' and 'data.frame':  32 obs. of  4 variables:
+ $ CVEGEO  : chr  "01" "02" "03" "04" ...
+ $ CVE_ENT : chr  "01" "02" "03" "04" ...
+ $ NOMGEO  : chr  "Aguascalientes" "Baja California" "Baja California Sur" "Campeche" ...
+ $ geometry:sfc_MULTIPOLYGON of length 32; first list element: List of 1
+  ..$ :List of 1
+  .. ..$ : num [1:2764, 1:2] 2469551 2469738 2469741 2469794 2469838 ...
+  ..- attr(*, "class")= chr [1:3] "XY" "MULTIPOLYGON" "sfg"
+ - attr(*, "sf_column")= chr "geometry"
+ - attr(*, "agr")= Factor w/ 3 levels "constant","aggregate",..: NA NA NA
+  ..- attr(*, "names")= chr [1:3] "CVEGEO" "CVE_ENT" "NOMGEO"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co">#En nomgeo está contenido el nombre del estado, vamos a pasarlo a mayúscula</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>Datos_Esp_Esta<span class="sc">$</span>NOMGEO <span class="ot">&lt;-</span> <span class="fu">toupper</span>(Datos_Esp_Esta<span class="sc">$</span>NOMGEO)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>¿Coinciden los nombres de los estados de mis bases de datos? Veamos</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"Los nombres que no coinciden como están en la base de datos de INEGI"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Los nombres que no coinciden como están en la base de datos de INEGI"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setdiff</span>(<span class="fu">unique</span>(Datos_Esp_Esta<span class="sc">$</span>NOMGEO),<span class="fu">unique</span>(Datos_DEFENSA<span class="sc">$</span>ESTADO))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "COAHUILA DE ZARAGOZA"            "CIUDAD DE MÉXICO"               
+[3] "MÉXICO"                          "MICHOACÁN DE OCAMPO"            
+[5] "NUEVO LEÓN"                      "QUERÉTARO"                      
+[7] "SAN LUIS POTOSÍ"                 "VERACRUZ DE IGNACIO DE LA LLAVE"
+[9] "YUCATÁN"                        </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"Los nombres que no coinciden como están en la base de datos de DEFENSA"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Los nombres que no coinciden como están en la base de datos de DEFENSA"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setdiff</span>(<span class="fu">unique</span>(Datos_DEFENSA<span class="sc">$</span>ESTADO), <span class="fu">unique</span>(Datos_Esp_Esta<span class="sc">$</span>NOMGEO))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "COAHUILA"         "MICHOACAN"        "NUEVO LEON"       "QUERETARO"       
+[5] "SAN LUIS POTOSI"  "YUCATAN"          "ESTADO DE MEXICO" "VERACRUZ"        
+[9] "CIUDAD DE MEXICO"</code></pre>
+</div>
+</div>
+<p>Vamos a unificar los nombre en las bases de datos dándole preferencia a sus nombres en la base “principal” de DEFENSA. Las diferencias recae en la acentuación y nombres largo/corto.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>mapa_Estatal <span class="ot">&lt;-</span> Datos_Esp_Esta <span class="sc">|&gt;</span> <span class="fu">mutate</span>( <span class="at">NOMGEO =</span> <span class="fu">case_match</span>(</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>NOMGEO,</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>      <span class="st">"COAHUILA DE ZARAGOZA"</span>            <span class="sc">~</span> <span class="st">"COAHUILA"</span>,</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>      <span class="st">"CIUDAD DE MÉXICO"</span>               <span class="sc">~</span> <span class="st">"CIUDAD DE MEXICO"</span>,</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>      <span class="st">"MÉXICO"</span>                          <span class="sc">~</span> <span class="st">"ESTADO DE MEXICO"</span>,</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>      <span class="st">"MICHOACÁN DE OCAMPO"</span>             <span class="sc">~</span> <span class="st">"MICHOACAN"</span>,</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>      <span class="st">"NUEVO LEÓN"</span>                      <span class="sc">~</span> <span class="st">"NUEVO LEON"</span>,</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>      <span class="st">"QUERÉTARO"</span>                      <span class="sc">~</span> <span class="st">"QUERETARO"</span>,</span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>      <span class="st">"SAN LUIS POTOSÍ"</span>                 <span class="sc">~</span> <span class="st">"SAN LUIS POTOSI"</span>,</span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>      <span class="st">"VERACRUZ DE IGNACIO DE LA LLAVE"</span> <span class="sc">~</span> <span class="st">"VERACRUZ"</span>,</span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>      <span class="st">"YUCATÁN"</span>                         <span class="sc">~</span> <span class="st">"YUCATAN"</span>,</span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">.default                          =</span> NOMGEO))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: There was 1 warning in `stopifnot()`.
+ℹ In argument: `NOMGEO = case_match(...)`.
+Caused by warning:
+! `case_match()` was deprecated in dplyr 1.2.0.
+ℹ Please use `recode_values()` instead.</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Asegurar que todo haya salido bien </span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="fu">setdiff</span>(<span class="fu">unique</span>(Datos_DEFENSA<span class="sc">$</span>ESTADO),<span class="fu">unique</span>(mapa_Estatal<span class="sc">$</span>NOMGEO))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>character(0)</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"Los nombre de los estados coinciden en ambas bases"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Los nombre de los estados coinciden en ambas bases"</code></pre>
+</div>
+</div>
+<section id="guardar-la-base-de-datos-estatal-inegi-con-nombres-unificados-a-defensa" class="level3" data-number="5.2.1">
+<h3 data-number="5.2.1" class="anchored" data-anchor-id="guardar-la-base-de-datos-estatal-inegi-con-nombres-unificados-a-defensa"><span class="header-section-number">5.2.1</span> Guardar la base de datos ESTATAL INEGI con nombres unificados a DEFENSA</h3>
+<p>La base de datos con los nombres coincidentes a mi base de datos principal de DEFENSA la voy a guardar en proceso. Este proceso lo repetiré después para los municipios.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">st_write</span>(mapa_Estatal,<span class="st">"../data/processed/mapa_Estatal.shp"</span>,<span class="at">delete_dsn =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Deleting source `../data/processed/mapa_Estatal.shp' using driver `ESRI Shapefile'
+Writing layer `mapa_Estatal' to data source 
+  `../data/processed/mapa_Estatal.shp' using driver `ESRI Shapefile'
+Writing 32 features with 3 fields and geometry type Multi Polygon.</code></pre>
+</div>
+</div>
+</section>
+<section id="cruce-de-bases-de-datos" class="level3" data-number="5.2.2">
+<h3 data-number="5.2.2" class="anchored" data-anchor-id="cruce-de-bases-de-datos"><span class="header-section-number">5.2.2</span> Cruce de bases de datos</h3>
 
 
 </section>

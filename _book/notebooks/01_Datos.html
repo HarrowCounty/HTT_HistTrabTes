@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>4&nbsp; Datos_Estatales – HTT_HistTrabTes</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../references.html" rel="next">
+<link href="../summary.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-9e3e5b9121e68b3f077afb32f2c64d95.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../notebooks/01_Datos.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Datos_Estatales</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">HTT_HistTrabTes</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Primeros pasos</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../summary.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notebooks/01_Datos.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Datos_Estatales</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#carga-y-análisis-principal-de-base-de-datos-defensa" id="toc-carga-y-análisis-principal-de-base-de-datos-defensa" class="nav-link active" data-scroll-target="#carga-y-análisis-principal-de-base-de-datos-defensa"><span class="header-section-number">5</span> Carga y análisis principal de base de datos DEFENSA</a>
+  <ul class="collapse">
+  <li><a href="#estadística-descriptiva-defensa" id="toc-estadística-descriptiva-defensa" class="nav-link" data-scroll-target="#estadística-descriptiva-defensa"><span class="header-section-number">5.1</span> Estadística descriptiva DEFENSA</a>
+  <ul class="collapse">
+  <li><a href="#graficos-generales-de-incautación" id="toc-graficos-generales-de-incautación" class="nav-link" data-scroll-target="#graficos-generales-de-incautación"><span class="header-section-number">5.1.1</span> Graficos generales de incautación</a></li>
+  <li><a href="#incautación-por-estado" id="toc-incautación-por-estado" class="nav-link" data-scroll-target="#incautación-por-estado"><span class="header-section-number">5.1.2</span> Incautación por estado</a></li>
+  <li><a href="#analisis-de-series-de-tiempo-y-tendencia" id="toc-analisis-de-series-de-tiempo-y-tendencia" class="nav-link" data-scroll-target="#analisis-de-series-de-tiempo-y-tendencia"><span class="header-section-number">5.1.3</span> Analisis de series de tiempo y tendencia</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Datos_Estatales</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scales)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="carga-y-análisis-principal-de-base-de-datos-defensa" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Carga y análisis principal de base de datos DEFENSA</h1>
+<p>En este primer bloque de limpieza y análisis de datos voy a trabajar con las bases de datos de DEFENSA y los datos espaciales del INEGI correspondiente a los estados.</p>
+<p>Los datos son cargados con la codificación UTF-8, aunque probablemente se harán codificaciones extra para poder cruzar los datos con los espaciales de INEGI</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>ruta_DB_DEFENSA <span class="ot">&lt;-</span> <span class="fu">here</span>(<span class="st">"data"</span>,<span class="st">"raw"</span>,<span class="st">"DEFENSA"</span>,<span class="st">"Datos_DEFENSA.xlsx"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>Datos_DEFENSA <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(ruta_DB_DEFENSA, <span class="at">skip =</span> <span class="dv">3</span>, <span class="at">guess_max =</span> <span class="dv">50000</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(Datos_DEFENSA)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>tibble [47,893 × 9] (S3: tbl_df/tbl/data.frame)
+ $ AÑO      : chr [1:47893] "2005" "2005" "2005" "2005" ...
+ $ MES      : chr [1:47893] "ENERO" "ENERO" "ENERO" "ENERO" ...
+ $ ESTADO   : chr [1:47893] "BAJA CALIFORNIA" "BAJA CALIFORNIA" "BAJA CALIFORNIA" "BAJA CALIFORNIA" ...
+ $ MUNICIPIO: chr [1:47893] "ENSENADA" "ENSENADA" "MEXICALI" "TECATE" ...
+ $ DROGA    : chr [1:47893] "HEROINA" "MARIGUANA" "MARIGUANA" "MARIGUANA" ...
+ $ AMPOLLETA: num [1:47893] NA NA NA NA NA NA NA NA NA NA ...
+ $ KGS.     : num [1:47893] 2.07 1064.08 548.7 1574.6 0.98 ...
+ $ LTS.     : num [1:47893] NA NA NA NA NA NA NA NA NA NA ...
+ $ UNIDADES : num [1:47893] NA NA NA NA NA NA NA NA NA NA ...</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(Datos_DEFENSA<span class="sc">$</span>ESTADO)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "BAJA CALIFORNIA"     "BAJA CALIFORNIA SUR" "CAMPECHE"           
+ [4] "CHIAPAS"             "CHIHUAHUA"           "COAHUILA"           
+ [7] "COLIMA"              "DURANGO"             "GUERRERO"           
+[10] "JALISCO"             "MICHOACAN"           "MORELOS"            
+[13] "NAYARIT"             "NUEVO LEON"          "OAXACA"             
+[16] "QUERETARO"           "QUINTANA ROO"        "SAN LUIS POTOSI"    
+[19] "SINALOA"             "SONORA"              "TABASCO"            
+[22] "TAMAULIPAS"          "YUCATAN"             "ZACATECAS"          
+[25] "PUEBLA"              "ESTADO DE MEXICO"    "GUANAJUATO"         
+[28] "AGUASCALIENTES"      "VERACRUZ"            "CIUDAD DE MEXICO"   
+[31] "HIDALGO"             "TLAXCALA"           </code></pre>
+</div>
+</div>
+<p>En general la base datos se compone de “AÑO” y “MES” de incautación, “ESTADO” y “MUNICIPIO”, “DROGA”, después 4 campos correspondientes al tipo de unidad “AMPOLLETA”,“KGS.”,“LTS.”,“UNIDADES”.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Vamos a ver cuantas datos ESTADO + Municipio tenemos</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(Datos_DEFENSA <span class="sc">|&gt;</span> <span class="fu">arrange</span>(ESTADO)<span class="sc">|&gt;</span> <span class="fu">distinct</span>(ESTADO,MUNICIPIO),<span class="at">n=</span><span class="dv">50</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1,766 × 2
+   ESTADO              MUNICIPIO                
+   &lt;chr&gt;               &lt;chr&gt;                    
+ 1 AGUASCALIENTES      CALVILLO                 
+ 2 AGUASCALIENTES      AGUASCALIENTES           
+ 3 AGUASCALIENTES      EL LLANO                 
+ 4 AGUASCALIENTES      COSIO                    
+ 5 AGUASCALIENTES      RINCON DE ROMOS          
+ 6 AGUASCALIENTES      PABELLON DE ARTEAGA      
+ 7 AGUASCALIENTES      JESUS MARIA              
+ 8 AGUASCALIENTES      TEPEZALA                 
+ 9 AGUASCALIENTES      SAN JOSE DE GRACIA       
+10 AGUASCALIENTES      SAN FRANCISCO DE LOS ROMO
+11 BAJA CALIFORNIA     ENSENADA                 
+12 BAJA CALIFORNIA     MEXICALI                 
+13 BAJA CALIFORNIA     TECATE                   
+14 BAJA CALIFORNIA     TIJUANA                  
+15 BAJA CALIFORNIA     PLAYAS DE ROSARITO       
+16 BAJA CALIFORNIA     SAN QUINTIN, B.C.        
+17 BAJA CALIFORNIA     SAN FELIPE, B.C.         
+18 BAJA CALIFORNIA SUR LA PAZ                   
+19 BAJA CALIFORNIA SUR MULEGE                   
+20 BAJA CALIFORNIA SUR COMONDU                  
+21 BAJA CALIFORNIA SUR LOS CABOS                
+22 BAJA CALIFORNIA SUR LORETO                   
+23 BAJA CALIFORNIA SUR GUERRERO NEGRO           
+24 CAMPECHE            CAMPECHE                 
+25 CAMPECHE            CARMEN                   
+26 CAMPECHE            ESCARCEGA                
+27 CAMPECHE            HOPELCHEN                
+28 CAMPECHE            CHAMPOTON                
+29 CAMPECHE            PALIZADA                 
+30 CAMPECHE            SANTIAGO LAPAGUIA        
+31 CAMPECHE            CALAKMUL                 
+32 CAMPECHE            CANDELARIA               
+33 CAMPECHE            TENABO                   
+34 CAMPECHE            CALKINI                  
+35 CHIAPAS             PALENQUE                 
+36 CHIAPAS             PICHUCALCO               
+37 CHIAPAS             ARRIAGA                  
+38 CHIAPAS             TAPACHULA                
+39 CHIAPAS             TONALA                   
+40 CHIAPAS             MAZATAN                  
+41 CHIAPAS             MOTOZINTLA               
+42 CHIAPAS             SUCHIATE                 
+43 CHIAPAS             LA TRINITARIA            
+44 CHIAPAS             CACAHOATAN               
+45 CHIAPAS             CINTALAPA                
+46 CHIAPAS             ESCUINTLA                
+47 CHIAPAS             MAZAPA DE MADERO         
+48 CHIAPAS             COMITAN DE DOMINGUEZ     
+49 CHIAPAS             TUXTLA GUTIERREZ         
+50 CHIAPAS             BERRIOZABAL              
+# ℹ 1,716 more rows</code></pre>
+</div>
+</div>
+<p>Por ejemplo, ya aquí empieza a haber detalles que los registraremos uno por uno mas adelantes.</p>
+<p>Baja California Sur NO tiene un municipio llamado “GUERRERO NEGRO”. Hay una localidad oficial llamada así. ¿Cuantas localidades llamadas o conocidas por “Guerrero Negro” (oficiales o extra-oficiales) puede haber en Baja California Sur?.</p>
+<p>Podemos pensar que el que levantó la información se refería a la localidad “GUERRERO NEGRO” en el municipio MUELEGUE, ahora, ¿Es correcto forzar la asignación de esta incautación al municipio de MUELEGUE solo por que sospechamos que el que levantó la información puso el nombre de la localidad y no del municipio? Al tratarse de datos tan sensibles como la incautación de droga no nos atrevemos a asignar datos a municipios por errores de captura. Después de cazar cada uno de estos detalles solo trabajaremos con capturas coincidentes a ESTADOS-MUNICIPIOS OFICIALES</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(Datos_DEFENSA <span class="sc">|&gt;</span> <span class="fu">filter</span>(ESTADO <span class="sc">==</span> <span class="st">"BAJA CALIFORNIA SUR"</span>, MUNICIPIO<span class="sc">==</span><span class="st">"GUERRERO NEGRO"</span>), <span class="at">n=</span><span class="dv">100</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 32 × 9
+   AÑO   MES        ESTADO     MUNICIPIO DROGA AMPOLLETA     KGS.  LTS. UNIDADES
+   &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;      &lt;chr&gt;     &lt;chr&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;
+ 1 2017  MAYO       BAJA CALI… GUERRERO… MARI…        NA 1230        NA       NA
+ 2 2017  MAYO       BAJA CALI… GUERRERO… META…        NA    0.75     NA       NA
+ 3 2017  AGOSTO     BAJA CALI… GUERRERO… COCA…        NA   10.0      NA       NA
+ 4 2017  AGOSTO     BAJA CALI… GUERRERO… HERO…        NA   22.6      NA       NA
+ 5 2017  SEPTIEMBRE BAJA CALI… GUERRERO… MARI…        NA    2.4      NA       NA
+ 6 2017  SEPTIEMBRE BAJA CALI… GUERRERO… META…        NA    0.1      NA       NA
+ 7 2018  ENERO      BAJA CALI… GUERRERO… META…        NA    0.12     NA       NA
+ 8 2018  JUNIO      BAJA CALI… GUERRERO… META…        NA  358.       NA       NA
+ 9 2018  JULIO      BAJA CALI… GUERRERO… MARI…        NA    0.322    NA       NA
+10 2018  AGOSTO     BAJA CALI… GUERRERO… META…        NA    2.20     NA       NA
+11 2018  DICIEMBRE  BAJA CALI… GUERRERO… MARI…        NA    0.941    NA       NA
+12 2019  FEBRERO    BAJA CALI… GUERRERO… MARI…        NA   78        NA       NA
+13 2020  DICIEMBRE  BAJA CALI… GUERRERO… MARI…        NA  400        NA       NA
+14 2021  AGOSTO     BAJA CALI… GUERRERO… META…        NA    0.4      NA       NA
+15 2023  MAYO       BAJA CALI… GUERRERO… META…        NA    0.029    NA       NA
+16 2023  SEPTIEMBRE BAJA CALI… GUERRERO… META…        NA    0.062    NA       NA
+17 2024  ENERO      BAJA CALI… GUERRERO… MARI…        NA    0.044    NA       NA
+18 2024  FEBRERO    BAJA CALI… GUERRERO… MARI…        NA    0.168    NA       NA
+19 2024  FEBRERO    BAJA CALI… GUERRERO… META…        NA    0.361    NA       NA
+20 2024  JULIO      BAJA CALI… GUERRERO… MARI…        NA    0.04     NA       NA
+21 2024  SEPTIEMBRE BAJA CALI… GUERRERO… FENT…        NA   NA        NA       50
+22 2024  SEPTIEMBRE BAJA CALI… GUERRERO… META…        NA    0.004    NA       NA
+23 2024  OCTUBRE    BAJA CALI… GUERRERO… FENT…        NA   NA        NA      100
+24 2025  ABRIL      BAJA CALI… GUERRERO… MARI…        NA    0.09     NA       NA
+25 2025  MAYO       BAJA CALI… GUERRERO… MARI…        NA    0.5      NA       NA
+26 2025  JULIO      BAJA CALI… GUERRERO… MARI…        NA    0.56     NA       NA
+27 2025  JULIO      BAJA CALI… GUERRERO… META…        NA    1.5      NA       NA
+28 2025  AGOSTO     BAJA CALI… GUERRERO… MARI…        NA    0.202    NA       NA
+29 2025  SEPTIEMBRE BAJA CALI… GUERRERO… FENT…        NA   NA        NA      255
+30 2025  SEPTIEMBRE BAJA CALI… GUERRERO… META…        NA    0.017    NA       NA
+31 2025  OCTUBRE    BAJA CALI… GUERRERO… META…        NA    0.023    NA       NA
+32 2025  DICIEMBRE  BAJA CALI… GUERRERO… MARI…        NA  250        NA       NA</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"KILOS DE DROGA HISTORICA INCAUTADA EN BAJA CALIFORNIA SUE - GUERRERO NEGRO"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "KILOS DE DROGA HISTORICA INCAUTADA EN BAJA CALIFORNIA SUE - GUERRERO NEGRO"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(Datos_DEFENSA <span class="sc">|&gt;</span>  <span class="fu">filter</span>(ESTADO <span class="sc">==</span> <span class="st">"BAJA CALIFORNIA SUR"</span>, MUNICIPIO <span class="sc">==</span> <span class="st">"GUERRERO NEGRO"</span>) <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="fu">sum</span>(KGS., <span class="at">na.rm =</span> <span class="cn">TRUE</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 1
+  `sum(KGS., na.rm = TRUE)`
+                      &lt;dbl&gt;
+1                     2360.</code></pre>
+</div>
+</div>
+<p>2360 Kilogramos de droga han sido incautados en GUERRERO NEGRO BAJA CALIFORNIA SUR en el histórico de la base de datos Enero 2005- DICIEMBRE 2025.</p>
+<section id="estadística-descriptiva-defensa" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="estadística-descriptiva-defensa"><span class="header-section-number">5.1</span> Estadística descriptiva DEFENSA</h2>
+<section id="graficos-generales-de-incautación" class="level3" data-number="5.1.1">
+<h3 data-number="5.1.1" class="anchored" data-anchor-id="graficos-generales-de-incautación"><span class="header-section-number">5.1.1</span> Graficos generales de incautación</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>total_promedio <span class="ot">&lt;-</span> Datos_DEFENSA <span class="sc">|&gt;</span> <span class="fu">group_by</span>(AÑO,DROGA,ESTADO) <span class="sc">|&gt;</span> <span class="fu">summarise</span>(</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Total_Kg  =</span> <span class="fu">sum</span>(KGS.,<span class="at">na.rm =</span> <span class="cn">TRUE</span>), </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Total_Lt =</span><span class="fu">sum</span>(LTS.,<span class="at">na.rm =</span> <span class="cn">TRUE</span>), </span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Total_Amp =</span> <span class="fu">sum</span>(AMPOLLETA,<span class="at">na.rm =</span> <span class="cn">TRUE</span>), </span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Total_Uni =</span> <span class="fu">sum</span>(UNIDADES,<span class="at">na.rm =</span> <span class="cn">TRUE</span>), </span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">Prom_Kg =</span> <span class="fu">mean</span>(KGS.,<span class="at">na.rm=</span><span class="cn">TRUE</span>),</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">Prom_Lt =</span> <span class="fu">mean</span>(LTS.,<span class="at">na.rm=</span><span class="cn">TRUE</span>),</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">Prom_Amp =</span> <span class="fu">mean</span>(AMPOLLETA,<span class="at">na.rm=</span><span class="cn">TRUE</span>),</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">Prom_Uni =</span> <span class="fu">mean</span>(UNIDADES,<span class="at">na.rm=</span><span class="cn">TRUE</span>),</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">n =</span> <span class="fu">n</span>(),</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>gtp1<span class="ot">&lt;-</span><span class="fu">ggplot</span>(total_promedio, <span class="fu">aes</span>(<span class="at">x=</span>AÑO, <span class="at">y=</span> Total_Kg, <span class="at">fill=</span>DROGA))<span class="sc">+</span><span class="fu">geom_col</span>()<span class="sc">+</span><span class="fu">labs</span>(<span class="at">y=</span><span class="st">"Total de Kg de droga incautado"</span>,<span class="at">x=</span><span class="st">"AÑO"</span>, <span class="at">title=</span><span class="st">"Total de  KG de Droga Incautado por año"</span>)<span class="sc">+</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>gtp2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(total_promedio,<span class="fu">aes</span>(<span class="at">x=</span>AÑO,<span class="at">y=</span>Total_Lt,<span class="at">fill=</span>DROGA))<span class="sc">+</span><span class="fu">geom_col</span>()<span class="sc">+</span><span class="fu">labs</span>(<span class="at">y=</span><span class="st">"Litros de Droga"</span>,<span class="at">x=</span><span class="st">"Año"</span>,<span class="at">title=</span><span class="st">"Litros de droga incautada por año Escala Pseudo Log10"</span>)<span class="sc">+</span><span class="fu">scale_y_continuous</span>(<span class="at">trans =</span> <span class="fu">pseudo_log_trans</span>(<span class="at">base =</span> <span class="dv">10</span>))<span class="sc">+</span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>gtp3 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(total_promedio, <span class="fu">aes</span>(<span class="at">x=</span>AÑO,<span class="at">y=</span>Total_Amp, <span class="at">fill=</span>DROGA))<span class="sc">+</span><span class="fu">geom_col</span>()<span class="sc">+</span><span class="fu">labs</span>(<span class="at">y=</span><span class="st">"Ampolletas de Droga"</span>,<span class="at">x=</span><span class="st">"Año"</span>,<span class="at">title=</span><span class="st">"Ampolletas de droga incautada por año Escala Pseudo Log10"</span>)<span class="sc">+</span><span class="fu">scale_y_continuous</span>(<span class="at">trans =</span> <span class="fu">pseudo_log_trans</span>(<span class="at">base =</span> <span class="dv">10</span>))<span class="sc">+</span></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>gtp4 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(total_promedio,<span class="fu">aes</span>(<span class="at">x=</span>AÑO, <span class="at">y=</span>Total_Uni, <span class="at">fill =</span> DROGA))<span class="sc">+</span><span class="fu">geom_col</span>()<span class="sc">+</span><span class="fu">labs</span>(<span class="at">y=</span><span class="st">"Unidades de Droga"</span>,<span class="at">x=</span><span class="st">"Año"</span>,<span class="at">title=</span><span class="st">"Unidades de droga incautada por año Escala Pseudo Log10"</span>)<span class="sc">+</span><span class="fu">scale_y_continuous</span>(<span class="at">trans =</span> <span class="fu">pseudo_log_trans</span>(<span class="at">base =</span> <span class="dv">10</span>))<span class="sc">+</span></span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>(gtp1<span class="sc">+</span>gtp2)<span class="sc">/</span>(gtp3<span class="sc">+</span>gtp4)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="01_Datos_files/figure-html/Gráficas Totales y promedios-1.png" class="img-fluid figure-img" width="1344"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Es importante notar que las única droga que se incautan en la modalidad de Ampolleta y Unidades es el FENTANILO. Me hace pensar que hay pocos estados en los que se incauta, vamos a revisarlo</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>IF1<span class="ot">&lt;-</span><span class="fu">ggplot</span>(total_promedio <span class="sc">|&gt;</span>  <span class="fu">filter</span>(DROGA<span class="sc">==</span><span class="st">"FENTANILO"</span>, Total_Amp <span class="sc">!=</span> <span class="dv">0</span>),<span class="fu">aes</span>(<span class="at">x=</span>AÑO,<span class="at">y=</span>Total_Amp,<span class="at">fill =</span> ESTADO))<span class="sc">+</span><span class="fu">geom_col</span>()<span class="sc">+</span><span class="fu">labs</span>(</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x=</span><span class="st">"Año"</span>,<span class="at">y=</span><span class="st">"Numero de ampolletas"</span>,<span class="at">title=</span><span class="st">"Ampolletas de Fentanilo Incautadas por estado"</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>IF2<span class="ot">&lt;-</span><span class="fu">ggplot</span>(total_promedio <span class="sc">|&gt;</span>  <span class="fu">filter</span>(DROGA<span class="sc">==</span><span class="st">"FENTANILO"</span>, Total_Uni <span class="sc">&gt;</span> <span class="dv">0</span>),<span class="fu">aes</span>(<span class="at">x=</span>AÑO,<span class="at">y=</span>Total_Amp,<span class="at">fill =</span> ESTADO))<span class="sc">+</span><span class="fu">geom_col</span>()<span class="sc">+</span><span class="fu">labs</span>(</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">x=</span><span class="st">"Año"</span>,<span class="at">y=</span><span class="st">"Numero de Unidades"</span>,<span class="at">title=</span><span class="st">"Unidades de Fentanilo Incautadas por estado"</span>)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>IF1<span class="sc">+</span>IF2</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="01_Datos_files/figure-html/Estados que incautan fentanilo-1.png" class="img-fluid figure-img" width="1344"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Estados sin incautación de fentanilo en formato Unidad</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"Estados sin incautación de fentanilo en formato Unidad"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Estados sin incautación de fentanilo en formato Unidad"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setdiff</span>(<span class="fu">unique</span>(Datos_DEFENSA<span class="sc">$</span>ESTADO),</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>        <span class="fu">unique</span>((total_promedio <span class="sc">|&gt;</span> <span class="fu">filter</span>(DROGA<span class="sc">==</span><span class="st">"FENTANILO"</span>,Total_Uni <span class="sc">&gt;</span> <span class="dv">0</span>))<span class="sc">$</span>ESTADO))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "GUERRERO"  "MICHOACAN" "OAXACA"    "YUCATAN"   "TLAXCALA" </code></pre>
+</div>
+</div>
+<p>Si bien hay pocos estados donde se ha comercializado el fentanilo en formato ampolleta, la incautación de fentanilo en formado unidad parece tener presencia en casi todos los estados de la república a excepción de Guerrero, Michoacán, Oaxaca, Yucatan, Tlaxcala.</p>
+</section>
+<section id="incautación-por-estado" class="level3" data-number="5.1.2">
+<h3 data-number="5.1.2" class="anchored" data-anchor-id="incautación-por-estado"><span class="header-section-number">5.1.2</span> Incautación por estado</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(total_promedio, <span class="fu">aes</span>(<span class="at">x=</span><span class="fu">reorder</span>(ESTADO,<span class="sc">-</span>n,<span class="at">FUN=</span>sum),<span class="at">y=</span>n,<span class="at">fill=</span>DROGA))<span class="sc">+</span><span class="fu">geom_col</span>()<span class="sc">+</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">70</span>, <span class="at">hjust =</span> <span class="dv">1</span>))<span class="sc">+</span><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Estado"</span>, <span class="at">y =</span> <span class="st">"Número de eventos (n)"</span>, <span class="at">title =</span> <span class="st">"Frecuencia de incautaciones por estado"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="01_Datos_files/figure-html/Frecuencia de Incautación de droga por estado-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="analisis-de-series-de-tiempo-y-tendencia" class="level3" data-number="5.1.3">
+<h3 data-number="5.1.3" class="anchored" data-anchor-id="analisis-de-series-de-tiempo-y-tendencia"><span class="header-section-number">5.1.3</span> Analisis de series de tiempo y tendencia</h3>
+<p>Los siguientes graficos son para ver como cambia la incautación de la droga a lo largo de los años o si hay patrones según el mes.</p>
+<p>Para ser mas simples a partir de aquí la exploración de datos solo se hará en el formato Kgs y Lts, dejando fuera las incautaciones en ampolletas y unidades.</p>
+<div class="cell" data-fig-high="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>incautacion_anual <span class="ot">&lt;-</span> Datos_DEFENSA <span class="sc">|&gt;</span> <span class="fu">group_by</span>(AÑO,DROGA) <span class="sc">|&gt;</span>  <span class="fu">summarise</span>(</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Resumen por AME: Año</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">n=</span><span class="fu">n</span>(),</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Kgs_A =</span> <span class="fu">sum</span>(KGS., <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Lts_A =</span> <span class="fu">sum</span>(LTS.,<span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>IA1<span class="ot">&lt;-</span><span class="fu">ggplot</span>(incautacion_anual,<span class="fu">aes</span>(<span class="at">x=</span>AÑO, <span class="at">y=</span>Kgs_A, <span class="at">color=</span>DROGA, <span class="at">group =</span> DROGA))<span class="sc">+</span><span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="dv">1</span>)<span class="sc">+</span><span class="fu">geom_point</span>()<span class="sc">+</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">70</span>, <span class="at">hjust =</span> <span class="dv">1</span>))<span class="sc">+</span><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Año"</span>, <span class="at">y =</span> <span class="st">"Kilogramos asegurados"</span>,<span class="at">title =</span> <span class="st">"Incautación anual de droga"</span>)</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>IA2<span class="ot">&lt;-</span><span class="fu">ggplot</span>(incautacion_anual,<span class="fu">aes</span>(<span class="at">x=</span>AÑO, <span class="at">y=</span>Kgs_A, <span class="at">color=</span>DROGA, <span class="at">group =</span> DROGA))<span class="sc">+</span><span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="dv">1</span>)<span class="sc">+</span><span class="fu">geom_point</span>()<span class="sc">+</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">70</span>, <span class="at">hjust =</span> <span class="dv">1</span>))<span class="sc">+</span><span class="fu">scale_y_continuous</span>(<span class="at">trans =</span> <span class="fu">pseudo_log_trans</span>(<span class="at">base =</span> <span class="dv">10</span>))<span class="sc">+</span><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Año"</span>, <span class="at">y =</span> <span class="st">"Kilogramos asegurados"</span>,<span class="at">title =</span> <span class="st">"Incautación anual de droga Pseudo Log 10"</span>)</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>IA3<span class="ot">&lt;-</span><span class="fu">ggplot</span>(incautacion_anual,<span class="fu">aes</span>(<span class="at">x=</span>AÑO, <span class="at">y=</span>Lts_A, <span class="at">color=</span>DROGA, <span class="at">group =</span> DROGA))<span class="sc">+</span><span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="dv">1</span>)<span class="sc">+</span><span class="fu">geom_point</span>()<span class="sc">+</span></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">70</span>, <span class="at">hjust =</span> <span class="dv">1</span>))<span class="sc">+</span><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Año"</span>, <span class="at">y =</span> <span class="st">"Litros asegurados"</span>,<span class="at">title =</span> <span class="st">"Incautación anual de droga"</span>)</span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>IA4<span class="ot">&lt;-</span><span class="fu">ggplot</span>(incautacion_anual,<span class="fu">aes</span>(<span class="at">x=</span>AÑO, <span class="at">y=</span>Lts_A, <span class="at">color=</span>DROGA, <span class="at">group =</span> DROGA))<span class="sc">+</span><span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="dv">1</span>)<span class="sc">+</span><span class="fu">geom_point</span>()<span class="sc">+</span></span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">70</span>, <span class="at">hjust =</span> <span class="dv">1</span>))<span class="sc">+</span><span class="fu">scale_y_continuous</span>(<span class="at">trans =</span> <span class="fu">pseudo_log_trans</span>(<span class="at">base =</span> <span class="dv">10</span>))<span class="sc">+</span><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Año"</span>, <span class="at">y =</span> <span class="st">"Litros asegurados"</span>,<span class="at">title =</span> <span class="st">"Incautación anual de droga Pseudo Log 10"</span>)</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>(IA1<span class="sc">+</span>IA3)<span class="sc">/</span>(IA2<span class="sc">+</span>IA4)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="01_Datos_files/figure-html/Serie de incautación por año-1.png" class="img-fluid figure-img" width="1536"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Revisando detalles asombra el tipo de droga de AMAPOLA que solo cuenta con presencia en el 2020. Vamos a ver los registros</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(Datos_DEFENSA <span class="sc">|&gt;</span> <span class="fu">filter</span>(DROGA<span class="sc">==</span><span class="st">"AMAPOLA"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 9
+  AÑO   MES       ESTADO    MUNICIPIO DROGA   AMPOLLETA  KGS.  LTS. UNIDADES
+  &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;
+1 2020  NOVIEMBRE QUERETARO QUERETARO AMAPOLA        NA  1.82    NA       NA</code></pre>
+</div>
+</div>
+<p>Solo hay un registro de amapola, due en el año de 2020 en Querétaro en particular 1.82 Kgs</p>
+<p>Tambien quiero pensar que el pico de metanfetamina en litros en el año 2018 corresponde a una única incautación-registro</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(Datos_DEFENSA <span class="sc">|&gt;</span>  <span class="fu">filter</span>(DROGA<span class="sc">==</span><span class="st">"METANFETAMINA"</span>,AÑO<span class="sc">==</span><span class="st">"2018"</span>,LTS.<span class="sc">!=</span><span class="dv">0</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 9
+  AÑO   MES     ESTADO          MUNICIPIO  DROGA AMPOLLETA  KGS.   LTS. UNIDADES
+  &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;           &lt;chr&gt;      &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;
+1 2018  ENERO   JALISCO         YAHUALICA… META…        NA 256     62.0       NA
+2 2018  ENERO   SINALOA         CULIACAN   META…        NA  12.2 1333.        NA
+3 2018  FEBRERO DURANGO         TAMAZULA   META…        NA  NA   3537         NA
+4 2018  FEBRERO JALISCO         TECALITLAN META…        NA  NA     62.7       NA
+5 2018  FEBRERO SINALOA         CULIACAN   META…        NA  31.6  860         NA
+6 2018  MARZO   BAJA CALIFORNIA PLAYAS DE… META…        NA 741.   668.        NA</code></pre>
+</div>
+</div>
+<p>Pues no, se debe a varias, la de mayor importancia son 2018 FEBRERO DURANGO TAMAZULA y 2018 ENERO SINALOA CULIACAN.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>meses_ordenados <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"ENERO"</span>, <span class="st">"FEBRERO"</span>, <span class="st">"MARZO"</span>, <span class="st">"ABRIL"</span>, <span class="st">"MAYO"</span>, <span class="st">"JUNIO"</span>,</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"JULIO"</span>, <span class="st">"AGOSTO"</span>, <span class="st">"SEPTIEMBRE"</span>, <span class="st">"OCTUBRE"</span>, <span class="st">"NOVIEMBRE"</span>, <span class="st">"DICIEMBRE"</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>incautacion_mensual <span class="ot">&lt;-</span> Datos_DEFENSA <span class="sc">|&gt;</span>  <span class="fu">group_by</span>(MES,DROGA) <span class="sc">|&gt;</span> <span class="fu">summarise</span>(</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">Kgs_M =</span> <span class="fu">sum</span>(KGS., <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">Lts_M =</span> <span class="fu">sum</span>(LTS., <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">MES =</span> <span class="fu">factor</span>(MES, <span class="at">levels =</span> meses_ordenados))</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(incautacion_mensual, <span class="fu">aes</span>(<span class="at">x=</span>MES, <span class="at">y=</span>Kgs_M, <span class="at">fill =</span> DROGA))<span class="sc">+</span></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">"white"</span>, <span class="at">linewidth =</span> <span class="fl">0.2</span>)<span class="sc">+</span></span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_polar</span>(<span class="at">theta =</span> <span class="st">"x"</span>)<span class="sc">+</span><span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Patrón cíclico mensual de incautaciones"</span>,<span class="at">x =</span> <span class="cn">NULL</span>,</span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Kilogramos asegurados"</span>)<span class="sc">+</span><span class="fu">facet_wrap</span>(<span class="sc">~</span> DROGA, <span class="at">scales =</span> <span class="st">"free_y"</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="01_Datos_files/figure-html/Incautaciones por mes-1.png" class="img-fluid figure-img" width="3000"></p>
+</figure>
+</div>
+</div>
+</div>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../summary.html" class="pagination-link" aria-label="Summary">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Summary</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../references.html" class="pagination-link" aria-label="References">
+        <span class="nav-page-text">References</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

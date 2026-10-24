@@ -1,6 +1,7 @@
 ---
-title: "Datos_Estatales"
+title: "Datos Estatales"
 ---
+
 ```{r}
 #| label: Importación paquetes
 #| message: false
@@ -12,6 +13,7 @@ library(here)
 library(ggplot2)
 library(patchwork)
 library(scales)
+library(plotly)
 ```
 
 # Carga y análisis principal de base de datos DEFENSA
@@ -204,15 +206,15 @@ incautacion_mensual <- Datos_DEFENSA |>  group_by(MES,DROGA) |> summarise(
 IM1<-ggplot(incautacion_mensual, aes(x=MES, y=Kgs_M, fill = DROGA))+
   geom_col(show.legend = FALSE, color = "white", linewidth = 0.2)+
   coord_polar(theta = "x")+labs(title = "Patrón cíclico mensual de incautaciones",x = NULL,
-    y = "Kilogramos asegurados")+facet_wrap(~ DROGA, scales = "free_y") 
+    y = "Kilogramos asegurados")+facet_wrap(~ DROGA, scales = "free_y")+scale_x_discrete(labels = function(x) abbreviate(x, minlength = 3)) 
 
 
 IM2<-ggplot(incautacion_mensual, aes(x=MES, y=Lts_M, fill = DROGA))+
   geom_col(show.legend = FALSE, color = "white", linewidth = 0.2)+
   coord_polar(theta = "x")+labs(title = "Patrón cíclico mensual de incautaciones",x = NULL,
-    y = "Litros asegurados")+facet_wrap(~ DROGA, scales = "free_y") 
+    y = "Litros asegurados")+facet_wrap(~ DROGA, scales = "free_y")+scale_x_discrete(labels = function(x) abbreviate(x, minlength = 3))
 
-IM1+IM2
+IM1/IM2
 ```
 
 ## Base de datos espaciales INEGI
@@ -273,4 +275,204 @@ La base de datos con los nombres coincidentes a mi base de datos principal de DE
 ```{r}
 st_write(mapa_Estatal,"../data/processed/mapa_Estatal.shp",delete_dsn = TRUE)
 ```
-### Cruce de bases de datos 
+### Cruce de bases de datos Estatales
+Dado que hice coincidir los nombres de los estados de esta manera haré el cruce.
+
+En los datos espaciales el nombre del estado está en NOMGEO, vamos a cruzar con la 
+base de DEFENSA por su campo ESTADO, ahora 
+
+Ahora, el primer cruce que haré será un cruce con un agrupamiento de ESTADO,DROGA.
+Pero es muy importante notar que hay combinaciones de ESTADO|DROGA que no existen como 
+Veracruz| Goma de opio, pero si no eciste la combinación no se puede graficar la silueta.
+
+Por lo tanto completaré todos los cruces inexistentes asignandoles un valor de NA.
+Ojo es importante diferencias el no tener registro a tener registro 0. Por eso recalco
+las combinaciones SIN registro se completarán en el cruce como valores faltantes. 
+
+* Cruce agrupado ESTADO|DROGA
+```{r}
+#| label: cruce por estados
+head(mapa_Estatal)
+summary(mapa_Estatal)
+
+
+head(Datos_DEFENSA)
+
+
+
+Df_Mapa_Def_Edo <- mapa_Estatal |>  left_join(Datos_DEFENSA |> group_by(ESTADO,DROGA) |> 
+                                                summarise(
+                                                  Total_Kgs = sum(KGS.,na.rm = TRUE),
+                                                  Total_Lts = sum(LTS., na.rm = TRUE),
+                                                  .groups = "drop"
+                                                ) |> 
+                                                complete(ESTADO = unique(mapa_Estatal$NOMGEO),
+                                                         DROGA= unique(Datos_DEFENSA$DROGA)), 
+                                              by=c("NOMGEO" = "ESTADO"))
+
+#ahora en mapa estado debe de haber resigro de Total_Kgs = NA, Total_LTS para veracruz|Goma de Opio
+
+print(Df_Mapa_Def_Edo |>  filter(NOMGEO == "VERACRUZ",DROGA=="GOMA DE OPIO"))
+```
+
+* Cruce agrupado MES|ESTADO|DROGA
+
+La idea de esta agrupado es analizar patrones de estacionalidad mensual en los estados y
+tipos de droga.
+
+```{r}
+Df_Mapa_Def_Mes <- mapa_Estatal |> left_join(Datos_DEFENSA |> group_by(ESTADO,DROGA,MES) |> 
+                                    summarise(Total_Kgs = sum(KGS.,na.rm = TRUE),
+                                              Total_Lts = sum(LTS.,na.rm = TRUE),
+                                                .groups = "drop") |> 
+                                     complete( ESTADO = unique(mapa_Estatal$NOMGEO),
+                                               DROGA = unique(Datos_DEFENSA$DROGA),
+                                                MES = unique(Datos_DEFENSA$MES)), 
+                                     by = c("NOMGEO"="ESTADO") )
+Df_Mapa_Def_Mes <- Df_Mapa_Def_Mes |> mutate(
+    MES = factor(MES, levels = c("ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO",
+           "JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE")))
+```
+
+* Cruce agrupado AÑO|ESTADO|DROGA
+La idea de esta agrupado es analizar la evolución a lo largo de los años por estado
+y tipos de droga.
+
+```{r}
+Df_Mapa_Def_Año <- mapa_Estatal |> left_join(Datos_DEFENSA |> group_by(ESTADO,DROGA,AÑO) |> 
+                                    summarise(Total_Kgs = sum(KGS.,na.rm = TRUE),
+                                              Total_Lts = sum(LTS.,na.rm = TRUE),
+                                                .groups = "drop") |> 
+                                     complete( ESTADO = unique(mapa_Estatal$NOMGEO),
+                                               DROGA = unique(Datos_DEFENSA$DROGA),
+                                                AÑO = unique(Datos_DEFENSA$AÑO)), 
+                                     by = c("NOMGEO"="ESTADO") )
+
+```
+
+
+## Graficas Espaciales y temporales Estatales
+
+```{r}
+#| label: grafica Total de Kgs Incautados por estado historico
+#| fig-width: 12
+#| fig-height: 14
+#| fig-dpi: 200
+
+ggplot(data = Df_Mapa_Def_Edo)+
+  geom_sf(aes(fill=Total_Kgs,text = paste("Estado:", NOMGEO, "<br>Kgs:", Total_Kgs)))+facet_wrap(~DROGA, ncol=3)+
+  scale_fill_viridis_c(option = "plasma", trans = "log1p", na.value = "grey90",
+    breaks = c(0, 10, 100, 1000, 10000, 100000, 1000000),
+    labels = scales::label_number(scale_cut = scales::cut_short_scale()))+
+  theme_minimal() +
+  labs(title = "Aseguramiento por Tipo de Droga (Gris estados sin registro)",
+    fill = "Kgs (Log)")+
+  geom_sf_text(aes(label = abbreviate(NOMGEO, minlength = 3)),size = 1,color = "black")+
+  theme(axis.text = element_blank(),legend.position = "bottom",legend.key.width = unit(2.5, "cm"))
+```
+
+```{r}
+#| label: grafica Total de Lts Incautados por estado historico
+#| fig-width: 12
+#| fig-height: 14
+#| fig-dpi: 200
+
+ggplot(data = Df_Mapa_Def_Edo)+
+  geom_sf(aes(fill=Total_Lts,text = paste("Estado:", NOMGEO, "<br>Kgs:", Total_Lts)))+facet_wrap(~DROGA, ncol=3)+
+  scale_fill_viridis_c(option = "plasma", trans = "log1p", na.value = "grey90",
+    breaks = c(0, 10, 100, 1000, 10000, 100000, 1000000),
+    labels = scales::label_number(scale_cut = scales::cut_short_scale()))+
+  theme_minimal() +
+  labs(title = "Aseguramiento por Tipo de Droga (Gris estados sin registro)",
+    fill = "Lts (Log)")+
+  geom_sf_text(aes(label = abbreviate(NOMGEO, minlength = 3)),size = 1,color = "black")+
+  theme(axis.text = element_blank(),legend.position = "bottom",legend.key.width = unit(2.5, "cm"))
+```
+
+
+### Estacionalidad de Aseguramientos
+
+A continuación, selecciona el tipo de droga para visualizar su comportamiento histórico mensual en el territorio nacional.
+
+```{r}
+#| label: estacionalidad mensual cocaina 
+#| fig-width: 12
+#| fig-height: 14
+#| fig-dpi: 200
+
+ggplot(data = Df_Mapa_Def_Mes |>  filter(DROGA=="COCAINA"))+
+  geom_sf(aes(fill=Total_Kgs,text = paste("Estado:", NOMGEO, "<br>Kgs:", Total_Kgs)))+facet_wrap(~MES, ncol=4)+
+  scale_fill_viridis_c(option = "plasma", trans = "log1p", na.value = "grey90",
+    breaks = c(0, 10, 100, 1000, 10000, 100000, 1000000),
+    labels = scales::label_number(scale_cut = scales::cut_short_scale()))+
+  theme_minimal() +
+  labs(title = "Aseguramiento De cocaina Temporalidad Mensual (Gris estados sin registro)",
+    fill = "Kgs (Log)")+
+  geom_sf_text(aes(label = abbreviate(NOMGEO, minlength = 3)),size = 1,color = "black")+
+  theme(axis.text = element_blank(),legend.position = "bottom",legend.key.width = unit(2.5, "cm"))
+
+```
+```{r}
+#| label: estacionalidad mensual METANFETAMINA 
+#| fig-width: 12
+#| fig-height: 14
+#| fig-dpi: 200
+
+ggplot(data = Df_Mapa_Def_Mes |>  filter(DROGA=="METANFETAMINA"))+
+  geom_sf(aes(fill=Total_Kgs,text = paste("Estado:", NOMGEO, "<br>Kgs:", Total_Kgs)))+facet_wrap(~MES, ncol=4)+
+  scale_fill_viridis_c(option = "plasma", trans = "log1p", na.value = "grey90",
+    breaks = c(0, 10, 100, 1000, 10000, 100000, 1000000),
+    labels = scales::label_number(scale_cut = scales::cut_short_scale()))+
+  theme_minimal() +
+  labs(title = "Aseguramiento De METANFETAMINA Temporalidad Mensual (Gris estados sin registro)",
+    fill = "Kgs (Log)")+
+  geom_sf_text(aes(label = abbreviate(NOMGEO, minlength = 3)),size = 1,color = "black")+
+  theme(axis.text = element_blank(),legend.position = "bottom",legend.key.width = unit(2.5, "cm"))
+
+```
+```{r}
+#| label: estacionalidad mensual MARIGUANA 
+#| fig-width: 12
+#| fig-height: 14
+#| fig-dpi: 200
+
+ggplot(data = Df_Mapa_Def_Mes |>  filter(DROGA=="MARIGUANA"))+
+  geom_sf(aes(fill=Total_Kgs,text = paste("Estado:", NOMGEO, "<br>Kgs:", Total_Kgs)))+facet_wrap(~MES, ncol=4)+
+  scale_fill_viridis_c(option = "plasma", trans = "log1p", na.value = "grey90",
+    breaks = c(0, 10, 100, 1000, 10000, 100000, 1000000),
+    labels = scales::label_number(scale_cut = scales::cut_short_scale()))+
+  theme_minimal() +
+  labs(title = "Aseguramiento De MARIGUANA Temporalidad Mensual (Gris estados sin registro)",
+    fill = "Kgs (Log)")+
+  geom_sf_text(aes(label = abbreviate(NOMGEO, minlength = 3)),size = 1,color = "black")+
+  theme(axis.text = element_blank(),legend.position = "bottom",legend.key.width = unit(2.5, "cm"))
+
+```
+```{r}
+#| label: estacionalidad mensual HEROINA 
+#| fig-width: 12
+#| fig-height: 14
+#| fig-dpi: 200
+
+ggplot(data = Df_Mapa_Def_Mes |>  filter(DROGA=="HEROINA"))+
+  geom_sf(aes(fill=Total_Kgs,text = paste("Estado:", NOMGEO, "<br>Kgs:", Total_Kgs)))+facet_wrap(~MES, ncol=4)+
+  scale_fill_viridis_c(option = "plasma", trans = "log1p", na.value = "grey90",
+    breaks = c(0, 10, 100, 1000, 10000, 100000, 1000000),
+    labels = scales::label_number(scale_cut = scales::cut_short_scale()))+
+  theme_minimal() +
+  labs(title = "Aseguramiento De HEROINA Temporalidad Mensual (Gris estados sin registro)",
+    fill = "Kgs (Log)")+
+  geom_sf_text(aes(label = abbreviate(NOMGEO, minlength = 3)),size = 1,color = "black")+
+  theme(axis.text = element_blank(),legend.position = "bottom",legend.key.width = unit(2.5, "cm"))
+
+```
+
+```{r}
+#| label: Evolución Anual de Mariguana
+#| fig-width: 12
+#| fig-height: 14
+#| fig-dpi: 200
+
+
+
+```

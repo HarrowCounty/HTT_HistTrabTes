@@ -1,0 +1,370 @@
+---
+title: "Homologación Datos Electorales"
+---
+
+```{r}
+#| label: Importación paquetes
+#| message: false
+library(sf)
+library(readxl)
+library(tidyverse)
+library(dplyr)
+library(here)
+library(ggplot2)
+library(patchwork)
+library(scales)
+library(plotly)
+library(stringi)
+```
+
+En general, este capítulo es para homologar y cruzar mi processed/Datos_DEFESA_Homologados.csv y los datos extraidos de:
+
+MUNICIPALES: https://github.com/emagar/elecRetrns/blob/master/data/aymu1970-on.coalAgg.csv ESTATALES: https://github.com/emagar/elecRetrns/blob/master/data/goed1961-on.csv
+
+que guardaré en data/raw/Datos_Electorales
+
+PERO ANTES, es importante notar que los estados y municipios también pueden tener error de registro. Pero las bases de emagar tiene clave estatal y códigos de identificador municipal de INEGI. Por lo tanto, lo primero que haré es darle estos atributos a mi base de datos homologada.
+
+# Agregar identificador municipal a mi base Datos_DEFENSA_Homologados.csv
+
+```{r}
+#|label: Base de datos Defensa Homologados y Catalogo Municipal INEGI 
+
+ruta_DB_DEFENSA_Hom <- here::here("data","processed","Datos_DEFENSA_Homologados.csv")
+
+Datos_DEFENSA_Hom <- read_csv(ruta_DB_DEFENSA_Hom, guess_max = 50000)
+
+ruta_datos_Municipales <- here::here("data","processed","Datos_EspacialesMunicipales.shp")
+
+Datos_Esp_Mun <- st_read(ruta_datos_Municipales)
+
+head(Datos_DEFENSA_Hom)
+head(Datos_Esp_Mun)
+
+
+```
+
+Antes de agregar las propiedades de CVE_ENT y CVE_MUN vamos a corroborar que todos los pares de ESTADO\|MUNICIPIO donde hay registro de incautación estén en la base geoespacial.
+
+```{r}
+pares_defensa <- Datos_DEFENSA_Hom %>%
+  select(ESTADO, MUNICIPIO) %>%
+  distinct()
+
+pares_espaciales <- Datos_Esp_Mun %>%
+  st_drop_geometry() %>%
+  select(ESTADO, MUNICIPIO) %>%
+  distinct()
+
+setdiff(select(Datos_DEFENSA_Hom, ESTADO, MUNICIPIO),select(st_drop_geometry(Datos_Esp_Mun), ESTADO, MUNICIPIO))
+
+```
+
+Todo bien.
+
+Entonces ahora sí vamos a hederar las claves de entidad y municipio. Por si las moscas voy a guardarla la base cruzada en un nuevo archivo
+
+Pasó algo que vale la pena reportar, al querrer hacer un left goin de la siguiente manera:
+
+"Datos_DEFENSA_Hom_CV \<- Datos_DEFENSA_Hom %\>% left_join( Datos_Esp_Mun %\>% st_drop_geometry() %\>% select(ESTADO, MUNICIPIO, CVE_ENT, CVE_MUN, CVEGEO) %\>% distinct(), by = c("ESTADO", "MUNICIPIO") )"
+
+El numero de registros pasó de 47119 a 47159. la razón de este ahumento de registro fué que la base de datos del INEGI tiene 4 registros con el mismo nombre de estado y con mismo nombre de municipio pero con diferente CVEGEO:
+
+1 OAXACA SAN JUAN MIXTEPEC 20208 2 OAXACA SAN JUAN MIXTEPEC 20209 3 OAXACA SAN PEDRO MIXTEPEC 20318 4 OAXACA SAN PEDRO MIXTEPEC 20319
+
+voy a ver si hay registro de incautacion en este estado:
+
+```{r}
+#| label: revisar la razón de duplicados
+
+Datos_DEFENSA_Hom |> filter(ESTADO=="OAXACA",MUNICIPIO %in% c("SAN JUAN MIXTEPE","SAN PEDRO MIXTEPEC")) 
+
+Datos_DEFENSA_Hom |> filter(ESTADO=="OAXACA",MUNICIPIO %in% c("SAN JUAN MIXTEPE","SAN PEDRO MIXTEPEC"))  |> nrow()
+```
+
+Ya valió madre jaja, a que CVGEO se le atribuye la incautación? No hay manera de saberlo.
+
+Que se va a hacer? Yo creo que de momento omitir esos dos registros, aunque representan incautaciones de Mariguana bastante fuertes.
+
+Los omitiré deberían de quedar 40 registros menos es decir 47119-40=47079
+
+```{r}
+#| label: Omitir homonimos OAXACA y Cruzar bases
+Datos_DEFENSA_Hom_CV <- Datos_DEFENSA_Hom %>%
+  # Exclusión temporal de municipios homónimos por ambigüedad de CVEGEO
+  filter(!(ESTADO == "OAXACA" & MUNICIPIO %in% c("SAN JUAN MIXTEPEC", "SAN PEDRO MIXTEPEC"))) %>%
+  left_join(
+    Datos_Esp_Mun %>% 
+      st_drop_geometry() %>% 
+      select(ESTADO, MUNICIPIO, CVE_ENT, CVE_MUN, CVEGEO) %>%
+      distinct(), 
+    by = c("ESTADO", "MUNICIPIO")
+  )
+
+# Verificamos que los registros se mantengan consistentes
+nrow(Datos_DEFENSA_Hom_CV)
+```
+
+# Cargar base de datos Electorales
+
+```{r}
+#|label: Base de datos Defensa Homologados y Catalogo Municipal INEGI 
+
+ruta_Electoral_Est <- here::here("data","raw","Datos_Electorales","goed1961-on.csv")
+
+Datos_Ele_Est <- read_csv(ruta_Electoral_Est)
+
+ruta_Electoral_Mun <- here::here("data","raw","Datos_Electorales","aymu1970-on.coalAgg.csv")
+
+Datos_Ele_Mun <- read_csv(ruta_Electoral_Mun)
+
+head(Datos_Ele_Est,n=15)
+head(Datos_Ele_Mun)
+
+
+```
+
+La base de datos de Elecciones estatales solo me importa cruzarla por el campo inegi que para que sea consistente con el CVE_MUN hay que agregarle un 0 a todas las claves que empiecen por 1,2,3,4,5,6,7,8,9 ya que en CVE_MUN el formato es 01,02,...,09
+
+Hay que cruzar los campos por inegi\|yr . Seguramente habrá problemas de homologación de nombre municipal. Pero si cruzarlo solo por el campo inegi es suficiente así lo haré.
+
+solo me interesa que el cruce recupere la info del campo de win con el nombre de PartidoElectoMun
+
+La base de datos de elecciones estatales se debe cruzar por edon\|yr.
+
+Para edon también hay que agregar un 0 a los numeros de 1-9
+
+Me interesa recuperar la info del campo win con el nombre de PartidoElectoMun
+
+De esta menera para cada estado tendré la información de que partido politico gobernaba en el estado y en el municipio para cada uno de los registros de incautación
+
+Depues hay que ver si se perdieron registros
+
+```{r}
+#| label: Limpiar bases electorales
+
+#Base Municipal
+Datos_Ele_Mun_Clean <- Datos_Ele_Mun %>%
+  filter(yr >= 1995) %>%
+  mutate(CVEGEO = str_pad(as.character(inegi), width = 5, side = "left", pad = "0")) %>%
+  # Quitar elecciones anuladas (busca la palabra dentro del status)
+  filter(!str_detect(status, "cancelled") | is.na(status)) %>%
+  mutate(win = case_when(
+    str_detect(status, "appointed") ~ "ConcejoMunicipal",
+    str_detect(status, "missing")   ~ NA_character_,
+    win == "0"                      ~ NA_character_,   # candado final
+    TRUE                            ~ win
+  )) %>%
+  arrange(CVEGEO, yr, desc(date)) %>%
+  distinct(CVEGEO, yr, .keep_all = TRUE) %>%
+  select(CVEGEO, yr, PartidoElectoMun = win)
+
+
+#Base Estatal
+Datos_Ele_Est_Clean <- Datos_Ele_Est %>%
+  filter(yr >= 1995) %>%
+  mutate(CVE_ENT = str_pad(as.character(edon), width = 2, side = "left", pad = "0")) %>%
+  distinct(CVE_ENT, yr, .keep_all = TRUE) %>%
+  select(CVE_ENT, yr, PartidoElectoEst = win)
+
+#Verificación: los tres deben dar 0 
+sum(duplicated(Datos_Ele_Mun_Clean[, c("CVEGEO", "yr")]))
+sum(duplicated(Datos_Ele_Est_Clean[, c("CVE_ENT", "yr")]))
+sum(Datos_Ele_Mun_Clean$PartidoElectoMun == "0", na.rm = TRUE)
+```
+
+# Emparejamiento temporal de incautaciones y periodos de gobierno (Rolling Join)
+
+Al intentar cruzar la base de datos de incautaciones (eventos registrados anualmente) con las bases electorales (eventos que ocurren cada 3 o 6 años), surge una incompatibilidad temporal.
+
+Un cruce exacto tradicional (`left_join` por año) generaría valores perdidos (`NA`) en la variable del partido político para todas las incautaciones ocurridas en años sin elecciones.
+
+Para resolver esto, se implementa un **cruce por proximidad (rolling join)** utilizando la función `closest()` del paquete `dplyr`.
+
+Esta técnica permite que cada registro de incautación busque hacia atrás en el tiempo y herede el partido político ganador de la elección más reciente (`yr < AÑO`). De esta forma, se asume que el partido electo en el año $t$ gobierna ininterrumpidamente hasta la siguiente elección.
+
+```{r}
+#| label: Preparacion y Cruce Electoral (Rolling Join)
+
+#Cruce Municipal Dinámico
+Datos_DEFENSA_Hom_CV <- Datos_DEFENSA_Hom_CV %>%
+  left_join(
+    Datos_Ele_Mun_Clean, 
+    # Buscar el mismo CVEGEO y la elección más cercana hacia atrás en el tiempo
+    join_by(CVEGEO, closest(AÑO > yr))) %>%
+  rename(`AnoElePresMunicipal` = yr) # Se elimina el año electoral para evitar confusión con el AÑO de incautación
+
+# 4. Cruce Estatal Dinámico
+Datos_DEFENSA_Hom_CV <- Datos_DEFENSA_Hom_CV %>%
+  left_join(
+    Datos_Ele_Est_Clean, 
+    join_by(CVE_ENT, closest(AÑO > yr))
+  ) %>%
+  rename(`AnoElePresEstatal` = yr)
+
+# Verificación de integridad
+colSums(is.na(Datos_DEFENSA_Hom_CV))
+nrow(Datos_DEFENSA_Hom_CV)
+```
+
+Al revisar la integridad del cruce se detectaron 2,400 valores perdidos (NA) exclusivamente en PartidoElectoEst. Corresponden a incautaciones de 2025 en los 9 estados que celebraron elecciones para gobernador en 2024 (Chiapas, Ciudad de México, Guanajuato, Jalisco, Morelos, Puebla, Tabasco, Veracruz y Yucatán). Como cada incautación hereda la elección inmediatamente anterior a su año, las de 2024 conservan al gobernador saliente y las de 2025 heredan la elección de 2024, cuyo ganador la base original omitió.
+
+```{r}
+#| label: estados sin registro de Partido electo estatal
+Datos_DEFENSA_Hom_CV %>%
+     filter(is.na(PartidoElectoEst)) %>%
+     select(ESTADO, AÑO, AnoElePresEstatal) %>%
+     distinct() %>%
+     arrange(ESTADO, AnoElePresEstatal)
+```
+
+La ausencia de estos datos se debe a que la base original de resultados electorales registró el evento del ciclo 2024, pero omitió el partido ganador, presumiblemente por haberse actualizado antes de los cómputos oficiales definitivos.
+
+Dado que los resultados de estos comicios son de dominio público y definitivos, se procede a imputar manualmente el partido ganador para corregir este vacío de información. De las 9 entidades, el Partido Acción Nacional (PAN) retuvo Guanajuato, Movimiento Ciudadano (MC) retuvo Jalisco, y el Movimiento de Regeneración Nacional (Morena) ganó las 7 gubernaturas restantes.
+
+```{r}
+#| label: Imputacion Ganadores Estatales 2024
+
+# Imputar los ganadores estatales de las elecciones de 2024
+Datos_DEFENSA_Hom_CV <- Datos_DEFENSA_Hom_CV %>%
+  mutate(
+    PartidoElectoEst = case_when(
+      # Si es 2024, no hay partido registrado y es Guanajuato -> PAN
+      is.na(PartidoElectoEst) & AnoElePresEstatal == 2024 & ESTADO == "GUANAJUATO" ~ "pan-pri-prd",
+      
+      # Si es 2024, no hay partido registrado y es Jalisco -> MC
+      is.na(PartidoElectoEst) & AnoElePresEstatal == 2024 & ESTADO == "JALISCO" ~ "mc",
+      
+      # Para el resto de los estados con NA en 2024 -> Morena
+      is.na(PartidoElectoEst) & AnoElePresEstatal == 2024 ~ "morena",
+      
+      # Para todos los demás registros que sí tienen dato, conservamos el valor original
+      TRUE ~ PartidoElectoEst
+    )
+  )
+
+# Verificación final de integridad tras la imputación
+colSums(is.na(Datos_DEFENSA_Hom_CV))
+
+
+```
+
+## Municipios sin partido electo tras el cruce
+
+Después del rolling join, `PartidoElectoMun` quedó con valores perdidos (NA) en 400 registros de incautación (0.85 % de la base). Antes de imputar cualquier valor es necesario saber **por qué** no hubo cruce, porque un NA puede significar cosas distintas: un error de homologación de claves, un municipio nuevo sin elección previa, o un municipio que no elige a sus autoridades por partido. Cada causa exige un tratamiento distinto, y asignar un partido sin conocerla produciría datos falsos.
+
+El siguiente diagnóstico resume los NA por estado: cuántos registros y municipios afectan y en qué años ocurren.
+
+```{r}
+#| label: diagnostico-na-municipales
+
+NAs_Municipales <- Datos_DEFENSA_Hom_CV %>%
+  filter(is.na(PartidoElectoMun))
+
+nrow(NAs_Municipales)
+
+NAs_Municipales %>%
+  group_by(ESTADO) %>%
+  summarise(
+    registros  = n(),
+    municipios = n_distinct(CVEGEO),
+    anio_min   = min(AÑO),
+    anio_max   = max(AÑO)
+  )
+```
+
+Los NA se concentran en solo dos estados. Se omite la lista completa de municipios porque son más de 100 y lo relevante es su patrón, no cada fila.
+
+Para el caso de Oaxaca se verifica si los municipios afectados tienen **alguna** elección registrada en la base electoral limpia. Si no la tienen, el NA no proviene de un error de cruce (por ejemplo, una clave INEGI mal escrita), sino de que la base electoral no contiene elecciones para ellos.
+
+```{r}
+#| label: verificar-oaxaca-sin-elecciones
+
+NAs_Municipales %>%
+  filter(ESTADO == "OAXACA") %>%
+  distinct(CVEGEO) %>%
+  mutate(sin_elecciones = !(CVEGEO %in% Datos_Ele_Mun_Clean$CVEGEO)) %>%
+  count(sin_elecciones)
+```
+
+**Resultado.** Los 400 NA se dividen en dos grupos con causas distintas:
+
+- **Baja California (78 registros, 0.17 %).** Corresponden a San Quintín y San Felipe entre 2022 y 2024. Son municipios de reciente creación que aún no habían celebrado una elección municipal y fueron gobernados por concejos fundacionales designados por el Congreso local. Por eso no hay elección previa de la cual heredar un partido.
+- **Oaxaca (322 registros, 0.68 %).** Corresponden a 99 municipios que no tienen ninguna elección registrada en la base. Esto es consistente con lo que documenta Magar (2026): la mayoría de los municipios oaxaqueños dejó de elegir autoridades por voto en 1995 y las nombra por usos y costumbres, por lo que la base los excluye. Se trata de una inferencia a partir de la ausencia de elecciones, no de una verificación contra el catálogo oficial de sistemas normativos indígenas.
+
+**Decisión.** Ninguno de los dos grupos se deja como NA ni se les imputa un partido de las elecciones anteriores. Dejarlos en NA los confundiría con datos faltantes cuando en realidad no existió una elección partidista, e imputarles un partido inventaría información. Se les asigna una categoría propia que describe su situación de gobierno, de modo que puedan identificarse y, si es necesario, excluirse del análisis por partido.
+
+```{r}
+#| label: imputacion-concejos-bc
+
+# Concejos fundacionales de Baja California.
+# El año "electoral" se iguala al año de la incautación, porque no hubo elección.
+Datos_DEFENSA_Hom_CV <- Datos_DEFENSA_Hom_CV %>%
+  mutate(
+    PartidoElectoMun = case_when(
+      is.na(PartidoElectoMun) & ESTADO == "BAJA CALIFORNIA" &
+        MUNICIPIO %in% c("SAN FELIPE", "SAN QUINTIN") ~ "ConsMuniFundacional",
+      TRUE ~ PartidoElectoMun
+    ),
+    AnoElePresMunicipal = case_when(
+      PartidoElectoMun == "ConsMuniFundacional" ~ AÑO,
+      TRUE ~ AnoElePresMunicipal
+    )
+  )
+```
+
+```{r}
+#| label: imputacion-usos-costumbres
+
+# Municipios de Oaxaca sin ninguna elección en la base: usos y costumbres.
+# AnoElePresMunicipal se deja en NA porque no existe una elección que asignar.
+Datos_DEFENSA_Hom_CV <- Datos_DEFENSA_Hom_CV %>%
+  mutate(
+    PartidoElectoMun = case_when(
+      is.na(PartidoElectoMun) & ESTADO == "OAXACA" &
+        !(CVEGEO %in% Datos_Ele_Mun_Clean$CVEGEO) ~ "UsosCostumbres",
+      TRUE ~ PartidoElectoMun
+    )
+  )
+
+# Verificación: PartidoElectoMun debe quedar sin NA
+colSums(is.na(Datos_DEFENSA_Hom_CV))
+```
+
+**Limitación.** Los 322 registros de `UsosCostumbres` (0.68 % de la base) corresponden a municipios rurales, en su mayoría indígenas, que quedan fuera de cualquier análisis por partido municipal. Siguen siendo plenamente válidos para el análisis estatal y federal.
+
+
+# Integración del Partido Presidencial (Nivel Federal)
+
+Para complementar el análisis político en sus tres niveles de gobierno, es indispensable incorporar qué partido ocupaba la Presidencia de la República en el momento de cada incautación.
+
+Dado que el titular del Ejecutivo Federal gobierna sobre todo el territorio nacional simultáneamente, este cruce no requiere emparejamiento geográfico. Basta con generar un registro de los ciclos presidenciales recientes y aplicar un cruce temporal por proximidad (*rolling join*) para que cada incautación herede el partido presidencial electo en el sexenio correspondiente.
+
+```{r}
+#| label: Imputacion Elecciones Presidenciales Federales
+
+#Datos histórica de elecciones federales (2000-2024)
+Datos_Ele_Fed <- tibble(
+  yr = c(2000, 2006, 2012, 2018, 2024),
+  PartidoElectoFed = c("pan", "pan", "pri", "morena", "morena"))
+
+#Cruce Federal Dinámico Solo temporal
+Datos_DEFENSA_Hom_CV <- Datos_DEFENSA_Hom_CV %>%
+  left_join(
+    Datos_Ele_Fed, 
+    # Busca la elección presidencial más cercana hacia atrás en el tiempo
+    join_by(closest(AÑO > yr)) ) %>%
+  rename(`AnoElePresFederal` = yr)
+
+# Verificación final de integridad de toda la base (Federal, Estatal y Municipal)
+colSums(is.na(Datos_DEFENSA_Hom_CV))
+```
+
+# Guardar la base de datos
+
+Esta base de datos por ende tiene la información por refistro de incautación homologado por Estado, Municipio y partido electo a nivel estatal y municipal en donde fué la incautación.
+
+```{r}
+ruta_guardado <- here::here("data", "processed", "Datos_DEFENSA_Politica_Homologada.csv")
+write_csv(Datos_DEFENSA_Hom_CV, ruta_guardado)
+```

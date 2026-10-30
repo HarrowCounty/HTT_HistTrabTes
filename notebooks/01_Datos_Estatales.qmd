@@ -16,9 +16,13 @@ library(scales)
 library(plotly)
 ```
 
+#NOTA IMPORTANTE
+
+Este analisis que se presenta a continuación está hecho a nivel estatal! Se hizo homologación estatal. PERO en el siguiente capítulo, realicé una homologación a nivel municipal y esto causó el descarte de 774 registros. Por lo tanto esta capítulo CONTEMPLA TODAVÍA ESOS REGISTROS.
+
 # Carga y análisis principal de base de datos DEFENSA
 
-En este primer bloque de limpieza y análisis de datos voy a trabajar con las bases de datos de DEFENSA y los datos espaciales del INEGI correspondiente a los estados. 
+En este primer bloque de limpieza y análisis de datos voy a trabajar con las bases de datos de DEFENSA y los datos espaciales del INEGI correspondiente a los estados.
 
 Los datos son cargados con la codificación UTF-8, aunque probablemente se harán codificaciones extra para poder cruzar los datos con los espaciales de INEGI
 
@@ -36,7 +40,6 @@ unique(Datos_DEFENSA$ESTADO)
 
 En general la base datos se compone de "AÑO" y "MES" de incautación, "ESTADO" y "MUNICIPIO", "DROGA", después 4 campos correspondientes al tipo de unidad "AMPOLLETA","KGS.","LTS.","UNIDADES".
 
-
 ```{r}
 #| label: análisis Datos DEFENSA
 
@@ -44,11 +47,12 @@ En general la base datos se compone de "AÑO" y "MES" de incautación, "ESTADO" 
 
 print(Datos_DEFENSA |> arrange(ESTADO)|> distinct(ESTADO,MUNICIPIO),n=50)
 ```
+
 Por ejemplo, ya aquí empieza a haber detalles que los registraremos uno por uno mas adelantes.
 
-Baja California Sur NO tiene un municipio llamado "GUERRERO NEGRO". Hay una localidad oficial llamada así. ¿Cuantas localidades llamadas o conocidas por "Guerrero Negro" (oficiales o extra-oficiales) puede haber en Baja California Sur?. 
+Baja California Sur NO tiene un municipio llamado "GUERRERO NEGRO". Hay una localidad oficial llamada así. ¿Cuantas localidades llamadas o conocidas por "Guerrero Negro" (oficiales o extra-oficiales) puede haber en Baja California Sur?.
 
-Podemos pensar que el que levantó la información se refería a la localidad "GUERRERO NEGRO" en el municipio MUELEGUE, ahora, ¿Es correcto forzar la asignación de esta incautación al municipio de MUELEGUE solo por que sospechamos que el que levantó la información puso el nombre de la localidad y no del municipio? Al tratarse de datos tan sensibles como la incautación de droga no nos atrevemos a asignar datos a municipios por errores de captura. Después de cazar cada uno de estos detalles solo trabajaremos con capturas coincidentes a ESTADOS-MUNICIPIOS OFICIALES 
+Podemos pensar que el que levantó la información se refería a la localidad "GUERRERO NEGRO" en el municipio MUELEGUE, ahora, ¿Es correcto forzar la asignación de esta incautación al municipio de MUELEGUE solo por que sospechamos que el que levantó la información puso el nombre de la localidad y no del municipio? Al tratarse de datos tan sensibles como la incautación de droga no nos atrevemos a asignar datos a municipios por errores de captura. Después de cazar cada uno de estos detalles solo trabajaremos con capturas coincidentes a ESTADOS-MUNICIPIOS OFICIALES
 
 ```{r}
 #| label: ej registro incorrecto
@@ -58,11 +62,13 @@ print(Datos_DEFENSA |> filter(ESTADO == "BAJA CALIFORNIA SUR", MUNICIPIO=="GUERR
 print("KILOS DE DROGA HISTORICA INCAUTADA EN BAJA CALIFORNIA SUE - GUERRERO NEGRO")
 print(Datos_DEFENSA |>  filter(ESTADO == "BAJA CALIFORNIA SUR", MUNICIPIO == "GUERRERO NEGRO") |> summarise(sum(KGS., na.rm = TRUE)))
 ```
+
 2360 Kilogramos de droga han sido incautados en GUERRERO NEGRO BAJA CALIFORNIA SUR en el histórico de la base de datos Enero 2005- DICIEMBRE 2025.
 
 ## Estadística descriptiva DEFENSA
 
-### Gráficos generales de incautación 
+### Gráficos generales de incautación
+
 ```{r}
 #| label: Gráficas Totales y promedios
 #| fig-height: 6
@@ -94,8 +100,8 @@ gtp4 <- ggplot(total_promedio,aes(x=AÑO, y=Total_Uni, fill = DROGA))+geom_col()
 
 (gtp1+gtp2)/(gtp3+gtp4)
 ```
-Es importante notar que las única droga que se incautan en la modalidad de Ampolleta y Unidades es el FENTANILO.
-Me hace pensar que hay pocos estados en los que se incauta, vamos a revisarlo
+
+Es importante notar que las única droga que se incautan en la modalidad de Ampolleta y Unidades es el FENTANILO. Me hace pensar que hay pocos estados en los que se incauta, vamos a revisarlo
 
 ```{r}
 #| label: Estados que incautan fentanilo
@@ -103,7 +109,7 @@ Me hace pensar que hay pocos estados en los que se incauta, vamos a revisarlo
 
 IF1<-ggplot(total_promedio |>  filter(DROGA=="FENTANILO", Total_Amp != 0),aes(x=AÑO,y=Total_Amp,fill = ESTADO))+geom_col()+labs(
   x="Año",y="Numero de ampolletas",title="Ampolletas de Fentanilo Incautadas por estado")
-IF2<-ggplot(total_promedio |>  filter(DROGA=="FENTANILO", Total_Uni > 0),aes(x=AÑO,y=Total_Amp,fill = ESTADO))+geom_col()+labs(
+IF2<-ggplot(total_promedio |>  filter(DROGA=="FENTANILO", Total_Uni > 0),aes(x=AÑO,y=Total_Uni,fill = ESTADO))+geom_col()+labs(
   x="Año",y="Numero de Unidades",title="Unidades de Fentanilo Incautadas por estado")
 
 IF1+IF2
@@ -115,9 +121,11 @@ setdiff(unique(Datos_DEFENSA$ESTADO),
         unique((total_promedio |> filter(DROGA=="FENTANILO",Total_Uni > 0))$ESTADO))
 
 ```
+
 Si bien hay pocos estados donde se ha comercializado el fentanilo en formato ampolleta, la incautación de fentanilo en formado unidad parece tener presencia en casi todos los estados de la república a excepción de Guerrero, Michoacán, Oaxaca, Yucatan, Tlaxcala.
 
 ### Incautación por estado
+
 ```{R}
 #| label: Frecuencia de Incautación de droga por estado
 
@@ -126,9 +134,10 @@ ggplot(total_promedio, aes(x=reorder(ESTADO,-n,FUN=sum),y=n,fill=DROGA))+geom_co
 ```
 
 ### Análisis de series de tiempo y tendencia
+
 Los siguientes gráficos son para ver como cambia la incautación de la droga a lo largo de los años o si hay patrones según el mes.
 
-Para ser mas simples a partir de aquí la exploración de datos solo se hará en el formato Kgs y Lts, dejando fuera las incautaciones en ampolletas y unidades. 
+Para ser mas simples a partir de aquí la exploración de datos solo se hará en el formato Kgs y Lts, dejando fuera las incautaciones en ampolletas y unidades.
 
 ```{r}
 #| label: Serie de incautación por año
@@ -157,6 +166,7 @@ IA4<-ggplot(incautacion_anual,aes(x=AÑO, y=Lts_A, color=DROGA, group = DROGA))+
 (IA1+IA3)/(IA2+IA4)
 
 ```
+
 Revisando detalles asombra el tipo de droga de AMAPOLA que solo cuenta con presencia en el 2020. Vamos a ver los registros
 
 ```{r}
@@ -164,6 +174,7 @@ Revisando detalles asombra el tipo de droga de AMAPOLA que solo cuenta con prese
 
 head(Datos_DEFENSA |> filter(DROGA=="AMAPOLA"))
 ```
+
 Solo hay un registro de amapola, fue en el año de 2020 en Querétaro en particular 1.82 Kgs
 
 También quiero pensar que el pico de metanfetamina en litros en el año 2018 corresponde a una única incautación-registro
@@ -173,7 +184,8 @@ También quiero pensar que el pico de metanfetamina en litros en el año 2018 co
 
 head(Datos_DEFENSA |>  filter(DROGA=="METANFETAMINA",AÑO=="2018",LTS.!=0))
 ```
-Pues no, se debe a varias, la de mayor importancia son 2018	FEBRERO	DURANGO	TAMAZULA y 2018	ENERO	SINALOA	CULIACAN.
+
+Pues no, se debe a varias, la de mayor importancia son 2018 FEBRERO DURANGO TAMAZULA y 2018 ENERO SINALOA CULIACAN.
 
 ```{r}
 #| label: boxplot incautaciones por año
@@ -218,7 +230,9 @@ IM1/IM2
 ```
 
 ## Base de datos espaciales INEGI
+
 La base de datos del INEGI compone datos Estatales y datos Municipales, primero trataremos los datos en su forma estatal.
+
 ```{r}
 #| label: Lectura de datos Estatales
 
@@ -228,6 +242,7 @@ Datos_Esp_Esta <- st_read(ruta_datos_Estatal)
 
 ggplot(Datos_Esp_Esta)+geom_sf()+labs(title = "Mapa simple para ver la división estatal")
 ```
+
 Ahora vamos a ver como están los nombres de los datos en ambas bases de datos puesto a que tenemos que preparar un cruce entre ambas bases.
 
 ```{r}
@@ -237,8 +252,8 @@ str(Datos_Esp_Esta)
 
 Datos_Esp_Esta$NOMGEO <- toupper(Datos_Esp_Esta$NOMGEO)
 ```
-¿Coinciden  los nombres de los estados de mis bases de datos?
-Veamos
+
+¿Coinciden los nombres de los estados de mis bases de datos? Veamos
 
 ```{r}
 print("Los nombres que no coinciden como están en la base de datos de INEGI")
@@ -246,6 +261,7 @@ setdiff(unique(Datos_Esp_Esta$NOMGEO),unique(Datos_DEFENSA$ESTADO))
 print("Los nombres que no coinciden como están en la base de datos de DEFENSA")
 setdiff(unique(Datos_DEFENSA$ESTADO), unique(Datos_Esp_Esta$NOMGEO))
 ```
+
 Vamos a unificar los nombre en las bases de datos dándole preferencia a sus nombres en la base "principal" de DEFENSA. Las diferencias recae en la acentuación y nombres largo/corto.
 
 ```{r}
@@ -269,27 +285,27 @@ setdiff(unique(Datos_DEFENSA$ESTADO),unique(mapa_Estatal$NOMGEO))
 
 print("Los nombre de los estados coinciden en ambas bases")
 ```
+
 ### Guardar la base de datos ESTATAL INEGI con nombres unificados a DEFENSA
+
 La base de datos con los nombres coincidentes a mi base de datos principal de DEFENSA la voy a guardar en proceso. Este proceso lo repetiré después para los municipios.
 
 ```{r}
 st_write(mapa_Estatal,"../data/processed/mapa_Estatal.shp",delete_dsn = TRUE)
 ```
+
 ### Cruce de bases de datos Estatales
+
 Dado que hice coincidir los nombres de los estados de esta manera haré el cruce.
 
-En los datos espaciales el nombre del estado está en NOMGEO, vamos a cruzar con la 
-base de DEFENSA por su campo ESTADO, ahora 
+En los datos espaciales el nombre del estado está en NOMGEO, vamos a cruzar con la base de DEFENSA por su campo ESTADO, ahora
 
-Ahora, el primer cruce que haré será un cruce con un agrupamiento de ESTADO,DROGA.
-Pero es muy importante notar que hay combinaciones de ESTADO|DROGA que no existen como 
-Veracruz| Goma de opio, pero si no eciste la combinación no se puede graficar la silueta.
+Ahora, el primer cruce que haré será un cruce con un agrupamiento de ESTADO,DROGA. Pero es muy importante notar que hay combinaciones de ESTADO\|DROGA que no existen como Veracruz\| Goma de opio, pero si no eciste la combinación no se puede graficar la silueta.
 
-Por lo tanto completaré todos los cruces inexistentes asignandoles un valor de NA.
-Ojo es importante diferencias el no tener registro a tener registro 0. Por eso recalco
-las combinaciones SIN registro se completarán en el cruce como valores faltantes. 
+Por lo tanto completaré todos los cruces inexistentes asignandoles un valor de NA. Ojo es importante diferencias el no tener registro a tener registro 0. Por eso recalco las combinaciones SIN registro se completarán en el cruce como valores faltantes.
 
-* Cruce agrupado ESTADO|DROGA
+- Cruce agrupado ESTADO\|DROGA
+
 ```{r}
 #| label: cruce por estados
 head(mapa_Estatal)
@@ -315,10 +331,9 @@ Df_Mapa_Def_Edo <- mapa_Estatal |>  left_join(Datos_DEFENSA |> group_by(ESTADO,D
 print(Df_Mapa_Def_Edo |>  filter(NOMGEO == "VERACRUZ",DROGA=="GOMA DE OPIO"))
 ```
 
-* Cruce agrupado MES|ESTADO|DROGA
+- Cruce agrupado MES\|ESTADO\|DROGA
 
-La idea de esta agrupado es analizar patrones de estacionalidad mensual en los estados y
-tipos de droga.
+La idea de esta agrupado es analizar patrones de estacionalidad mensual en los estados y tipos de droga.
 
 ```{r}
 Df_Mapa_Def_Mes <- mapa_Estatal |> left_join(Datos_DEFENSA |> group_by(ESTADO,DROGA,MES) |> 
@@ -334,9 +349,7 @@ Df_Mapa_Def_Mes <- Df_Mapa_Def_Mes |> mutate(
            "JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE")))
 ```
 
-* Cruce agrupado AÑO|ESTADO|DROGA
-La idea de esta agrupado es analizar la evolución a lo largo de los años por estado
-y tipos de droga.
+- Cruce agrupado AÑO\|ESTADO\|DROGA La idea de esta agrupado es analizar la evolución a lo largo de los años por estado y tipos de droga.
 
 ```{r}
 Df_Mapa_Def_Año <- mapa_Estatal |> left_join(Datos_DEFENSA |> group_by(ESTADO,DROGA,AÑO) |> 
@@ -350,7 +363,6 @@ Df_Mapa_Def_Año <- mapa_Estatal |> left_join(Datos_DEFENSA |> group_by(ESTADO,D
 
 ```
 
-
 ## Graficas Espaciales y temporales Estatales
 
 ```{r}
@@ -360,7 +372,7 @@ Df_Mapa_Def_Año <- mapa_Estatal |> left_join(Datos_DEFENSA |> group_by(ESTADO,D
 #| fig-dpi: 200
 
 ggplot(data = Df_Mapa_Def_Edo)+
-  geom_sf(aes(fill=Total_Kgs,text = paste("Estado:", NOMGEO, "<br>Kgs:", Total_Kgs)))+facet_wrap(~DROGA, ncol=3)+
+  geom_sf(aes(fill=Total_Kgs))+facet_wrap(~DROGA, ncol=3)+
   scale_fill_viridis_c(option = "plasma", trans = "log1p", na.value = "grey90",
     breaks = c(0, 10, 100, 1000, 10000, 100000, 1000000),
     labels = scales::label_number(scale_cut = scales::cut_short_scale()))+
@@ -389,19 +401,18 @@ ggplot(data = Df_Mapa_Def_Edo)+
   theme(axis.text = element_blank(),legend.position = "bottom",legend.key.width = unit(2.5, "cm"))
 ```
 
-
 ### Estacionalidad de Aseguramientos
 
 A continuación, selecciona el tipo de droga para visualizar su comportamiento histórico mensual en el territorio nacional.
 
 ```{r}
-#| label: estacionalidad mensual cocaina 
+#| label: estacionalidad mensual COCAINA
 #| fig-width: 12
 #| fig-height: 14
 #| fig-dpi: 200
 
 ggplot(data = Df_Mapa_Def_Mes |>  filter(DROGA=="COCAINA"))+
-  geom_sf(aes(fill=Total_Kgs,text = paste("Estado:", NOMGEO, "<br>Kgs:", Total_Kgs)))+facet_wrap(~MES, ncol=4)+
+  geom_sf(aes(fill=Total_Kgs))+facet_wrap(~MES, ncol=4)+
   scale_fill_viridis_c(option = "plasma", trans = "log1p", na.value = "grey90",
     breaks = c(0, 10, 100, 1000, 10000, 100000, 1000000),
     labels = scales::label_number(scale_cut = scales::cut_short_scale()))+
@@ -412,6 +423,7 @@ ggplot(data = Df_Mapa_Def_Mes |>  filter(DROGA=="COCAINA"))+
   theme(axis.text = element_blank(),legend.position = "bottom",legend.key.width = unit(2.5, "cm"))
 
 ```
+
 ```{r}
 #| label: estacionalidad mensual METANFETAMINA 
 #| fig-width: 12
@@ -419,7 +431,7 @@ ggplot(data = Df_Mapa_Def_Mes |>  filter(DROGA=="COCAINA"))+
 #| fig-dpi: 200
 
 ggplot(data = Df_Mapa_Def_Mes |>  filter(DROGA=="METANFETAMINA"))+
-  geom_sf(aes(fill=Total_Kgs,text = paste("Estado:", NOMGEO, "<br>Kgs:", Total_Kgs)))+facet_wrap(~MES, ncol=4)+
+  geom_sf(aes(fill=Total_Kgs))+facet_wrap(~MES, ncol=4)+
   scale_fill_viridis_c(option = "plasma", trans = "log1p", na.value = "grey90",
     breaks = c(0, 10, 100, 1000, 10000, 100000, 1000000),
     labels = scales::label_number(scale_cut = scales::cut_short_scale()))+
@@ -430,6 +442,7 @@ ggplot(data = Df_Mapa_Def_Mes |>  filter(DROGA=="METANFETAMINA"))+
   theme(axis.text = element_blank(),legend.position = "bottom",legend.key.width = unit(2.5, "cm"))
 
 ```
+
 ```{r}
 #| label: estacionalidad mensual MARIGUANA 
 #| fig-width: 12
@@ -437,7 +450,7 @@ ggplot(data = Df_Mapa_Def_Mes |>  filter(DROGA=="METANFETAMINA"))+
 #| fig-dpi: 200
 
 ggplot(data = Df_Mapa_Def_Mes |>  filter(DROGA=="MARIGUANA"))+
-  geom_sf(aes(fill=Total_Kgs,text = paste("Estado:", NOMGEO, "<br>Kgs:", Total_Kgs)))+facet_wrap(~MES, ncol=4)+
+  geom_sf(aes(fill=Total_Kgs))+facet_wrap(~MES, ncol=4)+
   scale_fill_viridis_c(option = "plasma", trans = "log1p", na.value = "grey90",
     breaks = c(0, 10, 100, 1000, 10000, 100000, 1000000),
     labels = scales::label_number(scale_cut = scales::cut_short_scale()))+
@@ -448,6 +461,7 @@ ggplot(data = Df_Mapa_Def_Mes |>  filter(DROGA=="MARIGUANA"))+
   theme(axis.text = element_blank(),legend.position = "bottom",legend.key.width = unit(2.5, "cm"))
 
 ```
+
 ```{r}
 #| label: estacionalidad mensual HEROINA 
 #| fig-width: 12
@@ -455,7 +469,7 @@ ggplot(data = Df_Mapa_Def_Mes |>  filter(DROGA=="MARIGUANA"))+
 #| fig-dpi: 200
 
 ggplot(data = Df_Mapa_Def_Mes |>  filter(DROGA=="HEROINA"))+
-  geom_sf(aes(fill=Total_Kgs,text = paste("Estado:", NOMGEO, "<br>Kgs:", Total_Kgs)))+facet_wrap(~MES, ncol=4)+
+  geom_sf(aes(fill=Total_Kgs))+facet_wrap(~MES, ncol=4)+
   scale_fill_viridis_c(option = "plasma", trans = "log1p", na.value = "grey90",
     breaks = c(0, 10, 100, 1000, 10000, 100000, 1000000),
     labels = scales::label_number(scale_cut = scales::cut_short_scale()))+
@@ -467,12 +481,109 @@ ggplot(data = Df_Mapa_Def_Mes |>  filter(DROGA=="HEROINA"))+
 
 ```
 
+### Evolución anual de Incautaciones
+
 ```{r}
-#| label: Evolución Anual de Mariguana
+#| label: Evolución Anual de COCAINA
 #| fig-width: 12
 #| fig-height: 14
 #| fig-dpi: 200
 
+ggplot(data = Df_Mapa_Def_Año |>  filter(DROGA=="COCAINA"))+
+  geom_sf(aes(fill=Total_Kgs))+facet_wrap(~AÑO, ncol=4)+
+  scale_fill_viridis_c(option = "plasma", trans = "log1p", na.value = "grey90",
+    breaks = c(0, 10, 100, 1000, 10000, 100000, 1000000),
+    labels = scales::label_number(scale_cut = scales::cut_short_scale()))+
+  theme_minimal() +
+  labs(title = "Aseguramiento De COCAINA Temporalidad Anual (Gris estados sin registro)",
+    fill = "Kgs (Log)")+
+  geom_sf_text(aes(label = abbreviate(NOMGEO, minlength = 3)),size = 1,color = "black")+
+  theme(axis.text = element_blank(),legend.position = "bottom",legend.key.width = unit(2.5, "cm"))
 
 
+```
+
+```{r}
+#| label: Evolución Anual de METANFETAMINA
+#| fig-width: 12
+#| fig-height: 14
+#| fig-dpi: 200
+
+ggplot(data = Df_Mapa_Def_Año |>  filter(DROGA=="METANFETAMINA"))+
+  geom_sf(aes(fill=Total_Kgs))+facet_wrap(~AÑO, ncol=4)+
+  scale_fill_viridis_c(option = "plasma", trans = "log1p", na.value = "grey90",
+    breaks = c(0, 10, 100, 1000, 10000, 100000, 1000000),
+    labels = scales::label_number(scale_cut = scales::cut_short_scale()))+
+  theme_minimal() +
+  labs(title = "Aseguramiento De METANFETAMINA Temporalidad Anual (Gris estados sin registro)",
+    fill = "Kgs (Log)")+
+  geom_sf_text(aes(label = abbreviate(NOMGEO, minlength = 3)),size = 1,color = "black")+
+  theme(axis.text = element_blank(),legend.position = "bottom",legend.key.width = unit(2.5, "cm"))
+
+
+```
+
+```{r}
+#| label: Evolución Anual de MARIGUANA
+#| fig-width: 12
+#| fig-height: 14
+#| fig-dpi: 200
+
+ggplot(data = Df_Mapa_Def_Año |>  filter(DROGA=="MARIGUANA"))+
+  geom_sf(aes(fill=Total_Kgs))+facet_wrap(~AÑO, ncol=4)+
+  scale_fill_viridis_c(option = "plasma", trans = "log1p", na.value = "grey90",
+    breaks = c(0, 10, 100, 1000, 10000, 100000, 1000000),
+    labels = scales::label_number(scale_cut = scales::cut_short_scale()))+
+  theme_minimal() +
+  labs(title = "Aseguramiento De MARIGUANA Temporalidad Anual (Gris estados sin registro)",
+    fill = "Kgs (Log)")+
+  geom_sf_text(aes(label = abbreviate(NOMGEO, minlength = 3)),size = 1,color = "black")+
+  theme(axis.text = element_blank(),legend.position = "bottom",legend.key.width = unit(2.5, "cm"))
+
+
+```
+
+### Series temporales de evolución de incautaciones de COCAINA NACIONAL y por estado
+
+```{r}
+#| label: Evolucion de incautaciones de cocaina Nacional
+#| fig-width: 10
+#| fig-height: 6
+
+
+Df_Mapa_Def_Año |> st_drop_geometry() |>
+  filter(DROGA == "COCAINA") |> group_by(AÑO) |>
+ summarise(Total_Nacional = sum(Total_Kgs,na.rm = TRUE), .groups = "drop") |>
+ ggplot(aes(x = AÑO, y = Total_Nacional,group = 1)) +
+ geom_line(color = "darkred", linewidth = 1) +
+ geom_point(color = "black", size = 1) +
+ theme_minimal() +
+ labs(
+  title = "Evolución Histórica de Aseguramientos de Cocaína Nacional",
+  x = "Año",y = "Kilos Asegurados") +
+ theme(
+  axis.text.x = element_text(angle = 45, hjust = 1, size = 7),
+  axis.text.y = element_text(size = 7))
+```
+
+```{r}
+#| label: Evolucion de incautaciones de cocaina Por estado
+#| fig-width: 14
+#| fig-height: 10
+#| column: page
+
+Df_Mapa_Def_Año |> st_drop_geometry() |>
+  filter(DROGA == "COCAINA") |> 
+  ggplot(aes(x = AÑO, y = Total_Kgs, group = NOMGEO)) +
+  geom_line(color = "darkred", linewidth = 1) +
+  geom_point(color = "black", size = 1) +
+  facet_wrap(~NOMGEO, ncol = 5, scales = "free_y",labeller = labeller(NOMGEO = function(x) abbreviate(x, minlength = 3))) + 
+  theme_minimal() +
+  labs(
+    title = "Evolución Histórica de Aseguramientos de Cocaína por Estado",
+    x = "Año",y = "Kilos Asegurados") +
+  theme(
+    axis.text.x = element_text(angle = 90, hjust = 1, size = 7),
+    axis.text.y = element_text(size = 7),
+    strip.text = element_text(face = "bold", size = 8))
 ```

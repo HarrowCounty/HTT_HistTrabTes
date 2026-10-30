@@ -1,0 +1,712 @@
+---
+title: " Homologación de Datos Municipales"
+---
+
+```{r}
+#| label: Importación paquetes
+#| message: false
+library(sf)
+library(readxl)
+library(tidyverse)
+library(dplyr)
+library(here)
+library(ggplot2)
+library(patchwork)
+library(scales)
+library(plotly)
+library(stringi)
+```
+
+La idea de este capítulo es HOMOLOGAR la base de datos de DEFENSA respecto a la base de datos del INEGI a nivel municipal.
+
+# Carga de la base de datos principal y espacial INEGI
+
+```{r}
+#|label: Base de datos Defensa 
+
+ruta_DB_DEFENSA <- here("data","raw","DEFENSA","Datos_DEFENSA.xlsx")
+
+Datos_DEFENSA <- read_xlsx(ruta_DB_DEFENSA, skip = 3, guess_max = 50000)
+
+str(Datos_DEFENSA)
+
+print("Pares únicos ESTADO|MUNICIPIO ")
+
+unique(Datos_DEFENSA[,c("ESTADO","MUNICIPIO")]) |> head(5)
+```
+
+El tema es que muy seguramente haya discrepancias entre los nombres de los municipios de INEGI\|DEFENSA
+
+```{r}
+#| label: Lectura de datos Municipales
+
+ruta_datos_Municipales <- here("data","raw","Datos_Mapas","00mun.shp")
+
+Datos_Esp_Mun <- st_read(ruta_datos_Municipales) |> rename(MUNICIPIO = NOMGEO) |> mutate(
+    MUNICIPIO = toupper(MUNICIPIO),
+    MUNICIPIO = stri_trans_general(MUNICIPIO, "Latin-ASCII"))
+
+
+ggplot(Datos_Esp_Mun)+geom_sf()+labs(title = "Mapa simple para ver la división municipal")
+
+
+head(Datos_Esp_Mun)
+
+```
+
+Para poder llegar a hacer el cruce de datos buscaremos hacer coincidir pares de ESTADO\|MUNICIPIO, en la bases de datos de INEGI NO hay como tal el nombre del ESTADO, este atributo se lo da el campo CVE_ENT, sin embargo los catálogos del MG_Integrado posee la relación de CVE_ENTIDAD con el nombre del estado.
+
+```{r}
+#| label: catálogo cve entidad y nombres de estados a Datos municipios
+
+ruta_catalogo_cve <- here("data","raw","Datos_Mapas","Area_GeoEst_Estatales.csv")
+
+Datos_CVE_Estado <- read.csv(ruta_catalogo_cve,fileEncoding = "Latin1",skip = 2)
+
+Datos_CVE_Estado$Nombre.del.Estado <- toupper(Datos_CVE_Estado$Nombre.del.Estado)
+
+Datos_CVE_Estado$Nombre.del.Estado <- stri_trans_general(Datos_CVE_Estado$Nombre.del.Estado, "Latin-ASCII")
+
+#Para efectos prácticos simplifiquemos el nombre del campo corresp al Estado
+Datos_CVE_Estado <- rename(Datos_CVE_Estado,ESTADO= Nombre.del.Estado)
+
+head(Datos_CVE_Estado)
+
+Datos_Esp_Mun <- left_join(Datos_Esp_Mun,Datos_CVE_Estado |>  mutate(Clave.Geoestadística.Estatal = sprintf("%02d", as.numeric(Clave.Geoestadística.Estatal))), by=c("CVE_ENT"="Clave.Geoestadística.Estatal"))
+
+head(Datos_Esp_Mun)
+```
+
+## Coincidencia de nombres municipales
+
+Este punto es sumamente importante, como se mencionaba en el capítulo pasado:
+
+> "Por ejemplo, ya aquí empieza a haber detalles que los registraremos uno por uno mas adelantes.
+
+> Baja California Sur NO tiene un municipio llamado "GUERRERO NEGRO". Hay una localidad oficial llamada así. ¿Cuantas localidades llamadas o conocidas por "Guerrero Negro" (oficiales o extra-oficiales) puede haber en Baja California Sur?.
+
+> Podemos pensar que el que levantó la información se refería a la localidad "GUERRERO NEGRO" en el municipio MUELEGUE, ahora, ¿Es correcto forzar la asignación de esta incautación al municipio de MUELEGUE solo por que sospechamos que el que levantó la información puso el nombre de la localidad y no del municipio? Al tratarse de datos tan sensibles como la incautación de droga no nos atrevemos a asignar datos a municipios por errores de captura. Después de cazar cada uno de estos detalles solo trabajaremos con capturas coincidentes a ESTADOS-MUNICIPIOS OFICIALES"
+
+- Ejemplo
+
+```{r}
+
+print("Lista de municipios en base INEGI para BCS")
+Datos_Esp_Mun |>  filter(ESTADO=="BAJA CALIFORNIA SUR") |>  pull(MUNICIPIO) |> unique() 
+
+print("Lista de municipios en base DEFENSA para BCS")
+Datos_DEFENSA |> filter(ESTADO=="BAJA CALIFORNIA SUR") |>  pull(MUNICIPIO) |> unique()
+```
+
+- Homologación de los nombres de los estados
+
+De igual manera como se vió en el capítulo anterior hay diferencias entre los nombres de los estados entre amas bases
+
+```{r}
+print("Los nombres que no coinciden como están en la base de datos de INEGI")
+setdiff(unique(Datos_Esp_Mun$ESTADO),unique(Datos_DEFENSA$ESTADO))
+print("Los nombres que no coinciden como están en la base de datos de DEFENSA")
+setdiff(unique(Datos_DEFENSA$ESTADO), unique(Datos_Esp_Mun$ESTADO))
+```
+
+Vamos a unificar los nombre en las bases de datos dándole preferencia a sus nombres en la base "principal" de DEFENSA. Las diferencias recae en nombres largo/corto.
+
+```{r}
+Datos_Esp_Mun <- Datos_Esp_Mun |> mutate( ESTADO = case_match(
+ESTADO,
+      "COAHUILA DE ZARAGOZA"            ~ "COAHUILA",
+      "CIUDAD DE MÉXICO"               ~ "CIUDAD DE MEXICO",
+      "MEXICO"                          ~ "ESTADO DE MEXICO",
+      "MICHOACAN DE OCAMPO"             ~ "MICHOACAN",
+      "VERACRUZ DE IGNACIO DE LA LLAVE" ~ "VERACRUZ",
+      .default                          = ESTADO))
+
+#Asegurar que todo haya salido bien 
+
+setdiff(unique(Datos_DEFENSA$ESTADO),unique(Datos_Esp_Mun$ESTADO))
+
+print("Los nombre de los estados coinciden en ambas bases")
+```
+
+## Homologar nombres de municipios pre-unir bases
+
+Vamos a revisar estado por estado qué nombres de municipio de DEFENSA no coinciden con el catálogo oficial de INEGI. El objetivo es identificar los errores de registro, excluir los datos inciertos y quedarnos únicamente con una homologación por coincidencia de pares ESTADO\|MUNICIPIO.
+
+### Principios
+
+- **La referencia oficial es INEGI.** El nombre válido de un municipio es el de la base geoespacial, ya sin acentos y en mayúsculas.
+- **Solo se homologa por precisión administrativa o de formato.** Ante la duda sobre qué municipio nombra la captura, el registro se descarta; los supuestos aceptados se listan en 6.2.3.
+- **Los municipios de INEGI sin registros en DEFENSA no son un problema.** Es esperable que muchos municipios no tengan incautaciones.
+- **Se compara contra el catálogo completo del estado, no solo contra los municipios sin coincidencia.** Si DEFENSA tiene capturas del nombre oficial y además una variante (por ejemplo "IGUALA DE LA INDEPENDENCIA" e "IGUALA"), el nombre oficial ya cruzó y no aparecería entre los huérfanos. Sin el catálogo completo no sabríamos a qué municipio corresponde la variante.
+
+### Reglas de decisión
+
+Cada nombre de DEFENSA que no coincide con INEGI dentro de su estado se clasifica así:
+
+**Se homologa** cuando la captura identifica sin ambigüedad a un único municipio oficial *del mismo estado*, en alguno de estos casos:
+
+1.  **Ortografía, ñ, acentos o abreviaturas.** Ejemplos: "CASTAÑOS" → "CASTANOS", "GRAL. CANUTO A. NERI" → "GENERAL CANUTO A. NERI".
+2.  **Nombre oficial con un elemento adicional.** La captura contiene el nombre oficial completo más un prefijo o sufijo, como el tipo de asentamiento o el estado. Ejemplos: "CD. JIMENEZ" → "JIMENEZ", "SAN QUINTIN, B.C." → "SAN QUINTIN", "ARIO DE ROSALES" → "ARIO".
+3.  **Nombre oficial truncado.** La captura es una parte del nombre oficial. Ejemplos: "IGUALA" → "IGUALA DE LA INDEPENDENCIA", "ACAMBAY" → "ACAMBAY DE RUIZ CASTANEDA".
+4.  **Nombre oficial anterior, documentado.** Solo si existe constancia del cambio de nombre. Ejemplo: "SOLIDARIDAD" → "PLAYA DEL CARMEN" (cambio oficial vigente desde marzo de 2025). Cada excepción de este tipo se justifica por separado en el apartado de su estado.
+
+**Se descarta** cuando se cumple cualquiera de estos supuestos:
+
+1.  **Nombre inexistente o erróneo.**
+2.  **Localidad o cabecera con nombre propio distinto al del municipio.** Ejemplos: "GUERRERO NEGRO" (localidad de MULEGE), "CIUDAD GUZMAN" (cabecera de ZAPOTLAN EL GRANDE), "CHETUMAL" (cabecera de OTHON P. BLANCO).
+3.  **Municipio oficial de otro estado.** Es un error en el campo ESTADO, no en el nombre. Ejemplos: "LERDO" y "GOMEZ PALACIO" en COAHUILA.
+
+### Limitaciones aceptadas
+
+- Una cabecera que comparte nombre con su municipio (por ejemplo "CD. JIMENEZ" o "TLALTIZAPAN") es indistinguible del municipio, y se acepta como tal.
+- Algunas capturas truncadas coinciden con el nombre oficial de municipios de *otros* estados (por ejemplo "ALLENDE" en GUANAJUATO o "VILLA HIDALGO" en OAXACA). Se homologan bajo el supuesto de que el campo ESTADO es correcto.
+
+### Flujo de trabajo
+
+Para cada estado:
+
+1.  Listar los nombres de DEFENSA que no coinciden con INEGI y el catálogo completo del estado.
+2.  Clasificar cada nombre con las reglas anteriores.
+3.  Descartar los registros erróneos y homologar las variaciones.
+4.  Verificar con la función de diagnóstico que todos los registros del estado coincidan con INEGI.
+5.  Guardar la base resultante en `data/processed`.
+
+La base final contendrá únicamente pares ESTADO\|MUNICIPIO que coinciden con el catálogo oficial de INEGI. Junto con ella se guardará una bitácora con cada descarte y cada homologación (nombre original, nombre final, motivo, número de registros y kilogramos afectados).
+
+# Flujo de Homologación
+
+```{r}
+
+
+# La primera vez que corrí este chunk caché errores en los nombres de los municipios por lectura 
+#ejemplo ESTADO: ZACATECAS 
+#En DEFENSA pero NO en INEGI:
+#[1] "CAÃ‘ITAS DE FELIPE PESCADOR"
+
+#Se corrige la columna dañada con iconv
+
+Datos_DEFENSA$MUNICIPIO <- iconv(Datos_DEFENSA$MUNICIPIO, from = "UTF-8", to = "Latin1")
+
+# La siguiente función busca los municipios que están en la base de DEFENSA pero no en INEGI.
+# Está pensada así para poder hacer análisis por cada estado.
+analizar_bloque_estados <- function(estados_analizar, inegi_df, defensa_df) {
+  for(estado_actual in estados_analizar){
+    muni_inegi <- inegi_df |> filter(ESTADO == estado_actual) |> pull(MUNICIPIO) |> unique()
+    muni_DEFENSA <- defensa_df |> filter(ESTADO == estado_actual) |> pull(MUNICIPIO) |> unique()
+    
+    InDef_noIne <- setdiff(muni_DEFENSA, muni_inegi)
+    
+    # -------------------------------------------------------------------------
+    # ANTES: InIne_noDef <- setdiff(muni_inegi, muni_DEFENSA)
+    # CAMBIO: Se eliminó el cálculo de 'InIne_noDef' (los sobrantes de INEGI) 
+    #         para usar directamente la lista completa 'muni_inegi'.
+    # RAZÓN METODOLÓGICA: Si DEFENSA tiene capturas correctas del municipio oficial 
+    #         Y ADEMÁS errores de variación (ej. "IGUALA DE LA INDEPENDENCIA" y "IGUALA"), 
+    #         el nombre oficial desaparece del setdiff() porque cruzó exitosamente. 
+    #         Para no perder de vista a qué municipio asignar la variación, se debe
+    #         comparar contra el catálogo COMPLETO del estado, no solo contra los huérfanos.
+    # -------------------------------------------------------------------------
+    
+    if(estado_actual %in% unique(inegi_df$ESTADO)){
+      # ¿Hay errores en DEFENSA?
+      if (length(InDef_noIne) > 0) {
+        cat("\n========================================\n")
+        cat("ESTADO:", estado_actual, "\n")
+        cat("\n En DEFENSA pero NO en INEGI (Errores o variaciones):\n")
+        print(InDef_noIne) 
+        
+        # Ahora se imprime la lista completa oficial para cazar la variación visualmente
+        cat("\n Lista oficial COMPLETA de INEGI (Catálogo del estado):\n")
+        print(sort(muni_inegi))
+        
+      } else {
+        cat("\n========================================\n")
+        cat("ESTADO:", estado_actual, "- Todos los registros de DEFENSA coinciden con INEGI\n")}}}}
+
+print("El orden del análisis será: ")
+cat(sort(unique(Datos_DEFENSA$ESTADO)), sep = "\n")
+
+```
+
+Para poder armar un base de datos con los municipios homologados, voy a hacer una copia de la base de datos que he estado trabajando, dado que se siguen viendo errores de formato por letras como Ñ,Í, vamos a apreovhecar la copia para hacer esta corrección.
+
+```{r}
+#| label: Copia de Base de datos para homologación de municipios
+Datos_DEFENSA_L <- Datos_DEFENSA |> 
+  mutate(MUNICIPIO = str_replace_all(MUNICIPIO, 
+    c("Ã'" = "Ñ",
+      "Ã‘" = "Ñ",
+      "Ã\u008d" = "Í")))
+```
+
+```{r}
+#| label: Analisis homologación Aguascalientes, Baja california, Baja California Sur
+
+analizar_bloque_estados(c("AGUASCALIENTES","BAJA CALIFORNIA","BAJA CALIFORNIA SUR"),Datos_Esp_Mun,Datos_DEFENSA_L)
+```
+
+- AGUASCALIENTES Todo en orden, coincidencia exacta
+- BAJA CALIFORNIA: se homologarán "SAN QUINTIN, B.C." → "SAN QUINTIN" y "SAN FELIPE, B.C." → "SAN FELIPE".
+- BAJA CALIFORNIA SUR: se descartarán los registros de "GUERRERO NEGRO". Al no ser un municipio oficial de BCS, podríamos suponer que es la localidad perteneciente a MULEGE, pero metodológicamente no forzaremos asignaciones basadas en suposiciones de captura.
+
+```{r}
+#| label: limpieza-b1-AGS-BC-BCS
+
+Datos_DEFENSA_L <- Datos_DEFENSA_L |>  filter(!(ESTADO == "BAJA CALIFORNIA SUR" & MUNICIPIO=="GUERRERO NEGRO")) |> 
+  mutate(MUNICIPIO = case_when(
+    ESTADO == "BAJA CALIFORNIA" & MUNICIPIO == "SAN QUINTIN, B.C." ~ "SAN QUINTIN",
+    ESTADO == "BAJA CALIFORNIA" & MUNICIPIO == "SAN FELIPE, B.C." ~ "SAN FELIPE",
+    TRUE ~ MUNICIPIO))
+
+analizar_bloque_estados(c("AGUASCALIENTES","BAJA CALIFORNIA","BAJA CALIFORNIA SUR"),Datos_Esp_Mun,Datos_DEFENSA_L)
+
+```
+
+```{r}
+#| label: Analisis homologación Campeche
+
+analizar_bloque_estados(c("CAMPECHE"),Datos_Esp_Mun,Datos_DEFENSA_L)
+```
+
+CAMPEHCE: SANTIAGO LAPAGUIA no es municiío oficial de CAMPECHE, la busqueda en google de hecho lo atribuye a una locaidad de OAXACA
+
+```{r}
+#| label: limpieza-b2-CAM
+Datos_DEFENSA_L <- Datos_DEFENSA_L |>  filter(!(ESTADO == "CAMPECHE" & MUNICIPIO=="SANTIAGO LAPAGUIA"))
+analizar_bloque_estados(c("CAMPECHE"),Datos_Esp_Mun,Datos_DEFENSA_L)
+```
+
+```{r}
+#| label: Analisis homologación Chiapas
+
+analizar_bloque_estados(c("CHIAPAS"),Datos_Esp_Mun,Datos_DEFENSA_L)
+
+```
+
+CHIAPAS: Ambos municipios requieren una corrección en la variación del nombre. "CINTALAPA" "VILLA FLORES" -\> CINTALAPA DE FIGUEROA , VILLAFLORES
+
+```{r}
+#| label: limpieza-b3-CHI
+
+Datos_DEFENSA_L <- Datos_DEFENSA_L |> 
+  mutate(MUNICIPIO = case_when(
+    ESTADO == "CHIAPAS" & MUNICIPIO == "CINTALAPA" ~ "CINTALAPA DE FIGUEROA",
+    ESTADO == "CHIAPAS" & MUNICIPIO == "VILLA FLORES" ~ "VILLAFLORES",
+    TRUE ~ MUNICIPIO))
+
+analizar_bloque_estados(c("CHIAPAS"),Datos_Esp_Mun,Datos_DEFENSA_L)
+```
+
+```{r}
+#| label: Analisis homologación Chihuahua
+
+analizar_bloque_estados(c("CHIHUAHUA","CIUDAD DE MEXICO","COAHUILA","COLIMA","DURANGO"),Datos_Esp_Mun,Datos_DEFENSA_L)
+```
+
+CHIHUAHUA: "CUSIHURIACHI" tiene un error de variación "CUSIHURIACHI" -\> "CUSIHUIRIACHI" "VILLA LOPEZ" -\> "LOPEZ" "VILLA MATAMOROS" -\> "MATAMOROS" "CD. JIMENEZ" -\> "JIMENEZ" "VILLA CORONADO" -\> "CORONADO" Errores de registro. "SANALONA","SAN JOSE DE GRACIA","EL TICUI","S. J. NEPOMUCENO","TEMORIS", "ATASCADEROS","BASASEACHI","DOLORES HIDALGO"
+
+CIUDAD DE MEXICO: Registro erróneo, no hay ninguna alcaldía llamada Xalapa, Xalapa apunta mas a la capital de veracruz. COAHUILA: Hay dos pequeñas variaciones en los nombre CUATROCIENEGAS, CASTAÑOS -\> CASTANOS" "CUATRO CIENEGAS" y dos errores de registro "LERDO", "GOMEZ PALACIO" ambos probablemente atribuibles a Durango? COLIMA: Colima no tiene municipios oficiales llamados "LA SOLEDAD","SAN ANDRES NIÑO" DURANGO: No tiene municipios oficiales llamados "ALAMOS" a tribuible a SONORA? "ROSARIO" atribuible s SINALOA o SONORA?
+
+```{r}
+#| label: limpieza-b4-CHI-CDMX-COAH-COLI-DURANGO
+Datos_DEFENSA_L <- Datos_DEFENSA_L |>  
+  filter(!(ESTADO=="CHIHUAHUA" & MUNICIPIO %in% c("SANALONA","SAN JOSE DE GRACIA","EL TICUI","S. J. NEPOMUCENO","TEMORIS","ATASCADEROS","BASASEACHI","DOLORES HIDALGO"))) |> 
+  mutate(MUNICIPIO = case_when(
+    ESTADO == "CHIHUAHUA" & MUNICIPIO == "CUSIHURIACHI"  ~ "CUSIHUIRIACHI",
+    ESTADO == "CHIHUAHUA" & MUNICIPIO == "CD. JIMENEZ"     ~ "JIMENEZ",
+    ESTADO == "CHIHUAHUA" & MUNICIPIO == "VILLA LOPEZ"     ~ "LOPEZ",
+    ESTADO == "CHIHUAHUA" & MUNICIPIO == "VILLA MATAMOROS" ~ "MATAMOROS",
+    ESTADO == "CHIHUAHUA" & MUNICIPIO == "VILLA CORONADO"  ~ "CORONADO",
+    TRUE ~ MUNICIPIO
+  )) |> 
+  filter(!(ESTADO=="CIUDAD DE MEXICO" & MUNICIPIO=="XALAPA")) |> 
+  filter(!(ESTADO=="COAHUILA" & MUNICIPIO %in% c("LERDO","GOMEZ PALACIO"))) |>
+  filter(!(ESTADO=="COLIMA" & MUNICIPIO %in% c("LA SOLEDAD","SAN ANDRES NIÑO"))) |> 
+  mutate(MUNICIPIO = case_when(
+    ESTADO == "COAHUILA" & MUNICIPIO == "CUATROCIENEGAS" ~ "CUATRO CIENEGAS",
+    ESTADO == "COAHUILA" & MUNICIPIO == "CASTAÑOS"       ~ "CASTANOS",
+    TRUE ~ MUNICIPIO
+  )) |>  
+  filter(!(ESTADO=="DURANGO" & MUNICIPIO %in% c("ALAMOS","ROSARIO")))
+
+analizar_bloque_estados(c("CHIHUAHUA","CIUDAD DE MEXICO","COAHUILA","COLIMA","DURANGO"),Datos_Esp_Mun,Datos_DEFENSA_L)
+```
+
+```{r}
+#| label: Analisis homologación EDOMEX, GUANAJUATO
+ 
+analizar_bloque_estados(c("ESTADO DE MEXICO","GUANAJUATO"),Datos_Esp_Mun,Datos_DEFENSA_L)
+```
+
+ESTADO DE MEXICO: Tiene dos detaller de variación ACAMBAY" "ECATEPEC" -\> "ACAMBAY DE RUIZ CASTANEDA","ECATEPEC DE MORELOS" GUANAJUATO: Variación de nombre: "ALLENDE" -\> "SAN MIGUEL DE ALLENDE" "DOLORES HIDALGO" -\> "DOLORES HIDALGO CUNA DE LA INDEPENDENCIA NACIONAL" "SAN JOSE ITURBIDE" -\>"SAN JOSE DE ITURBIDE"
+
+Errores de registro
+
+```{r}
+#| label: homologación EDOMEX, GTO
+Datos_DEFENSA_L <- Datos_DEFENSA_L |>
+  mutate(MUNICIPIO = case_when(
+    ESTADO=="ESTADO DE MEXICO" & MUNICIPIO=="ACAMBAY"  ~ "ACAMBAY DE RUIZ CASTANEDA",
+    ESTADO=="ESTADO DE MEXICO" & MUNICIPIO=="ECATEPEC" ~ "ECATEPEC DE MORELOS",
+    TRUE~MUNICIPIO
+  )) |> 
+  filter(!(ESTADO=="GUANAJUATO" & MUNICIPIO == "TAMAZULA")) |> 
+  mutate(MUNICIPIO = case_when(
+    ESTADO=="GUANAJUATO" & MUNICIPIO=="DOLORES HIDALGO"   ~ "DOLORES HIDALGO CUNA DE LA INDEPENDENCIA NACIONAL",
+    ESTADO=="GUANAJUATO" & MUNICIPIO=="SAN JOSE ITURBIDE" ~ "SAN JOSE DE ITURBIDE",
+    ESTADO=="GUANAJUATO" & MUNICIPIO=="ALLENDE"           ~ "SAN MIGUEL DE ALLENDE", # Rescatado
+    TRUE~MUNICIPIO
+  ))
+
+analizar_bloque_estados(c("ESTADO DE MEXICO","GUANAJUATO"),Datos_Esp_Mun,Datos_DEFENSA_L)
+```
+
+```{r}
+#| label: diagnostico-b5-GRRO
+
+analizar_bloque_estados(c("GUERRERO"), Datos_Esp_Mun, Datos_DEFENSA_L)
+```
+
+GUERRERO: Nombres que requieren corrección de variación: "LA UNION DE ISIDORO M. DE OCA" -\> "LA UNION DE ISIDORO MONTES DE OCA" "APAXTLA" -\> "APAXTLA DE CASTREJON" "GRAL. CANUTO A. NERI"-\> "GENERAL CANUTO A. NERI" "HELIODORO CASTILLO"-\> "GENERAL HELIODORO CASTILLO" "JOSE AZUETA" -\>"ZIHUATANEJO DE AZUETA" cambio de nombre Municipal en el 2008 "IGUALA"-\>"IGUALA DE LA INDEPENDENCIA" "JUCHITAN GUERRERO" -\> "JUCHITAN"
+
+Errores de registro
+
+"SURUTATO" "MANUEL M. DIEGUEZ" "TLACOTEPEC" "EL TICUI" "CHICHIHUALCO" "CIUDAD ALTAMIRANO" "AMATEPEC"
+
+```{r}
+#| label: limpieza-b5-GRRO
+Datos_DEFENSA_L <- Datos_DEFENSA_L |>  
+  filter(!(ESTADO == "GUERRERO" & MUNICIPIO %in% c("SURUTATO", "MANUEL M. DIEGUEZ", "EL TICUI", "TLACOTEPEC", "CHICHIHUALCO", "CIUDAD ALTAMIRANO", "AMATEPEC"))) |> 
+  mutate(MUNICIPIO = case_when(
+    ESTADO == "GUERRERO" & MUNICIPIO == "LA UNION DE ISIDORO M. DE OCA" ~ "LA UNION DE ISIDORO MONTES DE OCA",
+    ESTADO == "GUERRERO" & MUNICIPIO == "APAXTLA"                       ~ "APAXTLA DE CASTREJON",
+    ESTADO == "GUERRERO" & MUNICIPIO == "GRAL. CANUTO A. NERI"          ~ "GENERAL CANUTO A. NERI",
+    ESTADO == "GUERRERO" & MUNICIPIO == "HELIODORO CASTILLO"            ~ "GENERAL HELIODORO CASTILLO",
+    ESTADO == "GUERRERO" & MUNICIPIO == "IGUALA"                        ~ "IGUALA DE LA INDEPENDENCIA",
+    ESTADO == "GUERRERO" & MUNICIPIO == "JUCHITAN GUERRERO"             ~ "JUCHITAN",
+    ESTADO == "GUERRERO" & MUNICIPIO == "JOSE AZUETA"                   ~ "ZIHUATANEJO DE AZUETA",
+    TRUE ~ MUNICIPIO
+  ))
+
+analizar_bloque_estados(c("GUERRERO"), Datos_Esp_Mun, Datos_DEFENSA_L)
+```
+
+```{r}
+#| label: diagnostico-b5-HDL
+
+analizar_bloque_estados(c("HIDALGO"), Datos_Esp_Mun, Datos_DEFENSA_L)
+```
+
+HILDAGO: Variación de nombre: "SANTIAGO TULANTEPEC DE L G" -\> "SANTIAGO TULANTEPEC DE LUGO GUERRERO"
+
+Error de registro: "BASASEACHI" "APATZINGAN"
+
+```{r}
+#| label: limpieza-b6-HIDALGO
+
+Datos_DEFENSA_L <- Datos_DEFENSA_L |>  
+  filter(!(ESTADO == "HIDALGO" & MUNICIPIO %in% c("BASASEACHI", "APATZINGAN"))) |> 
+  mutate(MUNICIPIO = case_when(
+    ESTADO == "HIDALGO" & MUNICIPIO == "SANTIAGO TULANTEPEC DE L G" ~ "SANTIAGO TULANTEPEC DE LUGO GUERRERO",
+    TRUE ~ MUNICIPIO
+  ))
+
+analizar_bloque_estados(c("HIDALGO"), Datos_Esp_Mun, Datos_DEFENSA_L)
+```
+
+```{r}
+#| label: diagnostico-b5-JAL-MICH
+
+analizar_bloque_estados(c("JALISCO","MICHOACAN"), Datos_Esp_Mun, Datos_DEFENSA_L)
+```
+
+JALISCO Variación de nombre "SAN MARTIN DE BOLAÑOS" -\> "SAN MARTIN DE BOLANOS" "AMATITLAN" -\> "AMATITAN" "SAN MARTIN DE HIDALGO" -\> "SAN MARTIN HIDALGO" "CAÑADAS DE OBREGON" -\> "CANADAS DE OBREGON"
+
+Error de registro "MANUEL M. DIEGUEZ" "GUAMUCHIL" "CIUDAD GUZMAN" Este en especial es muy importante, ya que oficialmente no hay un municipio llamado CIUDAD GUZMAN, es muy probable que el responsable de captura allá querido referirse a la cabezera municipal de Zapotlán el grande. Pero la regla es estricta y no podemos hacer esa suposición.
+
+MICHOACAN Variación de nombre "ARIO DE ROSALES" -\> "ARIO" "BRISEÑAS" -\> "BRISENAS"
+
+```{r}
+#| label: limpieza-b7-JALISCO-MICHOACAN
+
+Datos_DEFENSA_L <- Datos_DEFENSA_L |>  
+  filter(!(ESTADO == "JALISCO" & MUNICIPIO %in% c("MANUEL M. DIEGUEZ", "GUAMUCHIL", "CIUDAD GUZMAN"))) |> 
+  mutate(MUNICIPIO = case_when(
+    ESTADO == "JALISCO" & MUNICIPIO == "SAN MARTIN DE BOLAÑOS" ~ "SAN MARTIN DE BOLANOS",
+    ESTADO == "JALISCO" & MUNICIPIO == "AMATITLAN"             ~ "AMATITAN",
+    ESTADO == "JALISCO" & MUNICIPIO == "SAN MARTIN DE HIDALGO" ~ "SAN MARTIN HIDALGO",
+    ESTADO == "JALISCO" & MUNICIPIO == "CAÑADAS DE OBREGON"    ~ "CANADAS DE OBREGON",
+    ESTADO == "MICHOACAN" & MUNICIPIO == "ARIO DE ROSALES"     ~ "ARIO",
+    ESTADO == "MICHOACAN" & MUNICIPIO == "BRISEÑAS"            ~ "BRISENAS",
+    TRUE ~ MUNICIPIO))
+
+analizar_bloque_estados(c("JALISCO", "MICHOACAN"), Datos_Esp_Mun, Datos_DEFENSA_L)
+```
+
+```{r}
+#| label: diagnostico-b-MORE-NAYA-NUELE
+
+analizar_bloque_estados(c("MORELOS","NAYARIT"), Datos_Esp_Mun, Datos_DEFENSA_L)
+```
+
+```{r}
+#| label: limpieza-b8-MORELOS-NAYARIT
+
+Datos_DEFENSA_L <- Datos_DEFENSA_L |>  
+  mutate(MUNICIPIO = case_when(
+    ESTADO == "MORELOS" & MUNICIPIO == "TLALTIZAPAN" ~ "TLALTIZAPAN DE ZAPATA",
+    ESTADO == "MORELOS" & MUNICIPIO == "JONACATEPEC" ~ "JONACATEPEC DE LEANDRO VALLE",
+    TRUE ~ MUNICIPIO
+  ))
+
+analizar_bloque_estados(c("MORELOS", "NAYARIT"), Datos_Esp_Mun, Datos_DEFENSA_L)
+```
+
+```{r}
+#| label: diagnostico-b-NUEVOLEON
+
+analizar_bloque_estados(c("NUEVO LEON"), Datos_Esp_Mun, Datos_DEFENSA_L)
+```
+
+NUEVO LEON Variación de nombre "GENERAL TREVIÑO" -\> "GENERAL TREVINO"
+
+Error de registro Se identificó un error masivo de captura en la base de DEFENSA. Hay 89 nombres distintos etiquetados bajo el estado de Nuevo León que corresponden a municipios de otras entidades federativas (Tamaulipas, Sinaloa, Michoacán, Oaxaca, Baja California, etc.) o a localidades. Se descartan en su totalidad por no pertenecer a la geografía oficial del estado.
+
+```{r}
+#| label: limpieza-b13-NUEVO_LEON
+
+# Lista de los 89 municipios mal capturados en Nuevo León para mantener el código limpio
+errores_nl <- c("SUCHIAPA", "SANALONA", "EL FUERTE", "MADERO", "BADIRAGUATO", "SAN JOSE DE GRACIA", 
+                "LLERA", "AGUILILLA", "NUEVO LAREDO", "SAN PEDRO MIXTEPEC", "SANTA MARIA DEL ORO", 
+                "TEJUPILCO", "ALAMOS", "MARISCALA DE JUAREZ", "CULIACAN", "HEROICA CIUDAD DE HUAJUAPAN DE LEON", 
+                "ROSARIO", "SAN LUIS AMATLAN", "REYNOSA", "CHIAPA DE CORZO", "GUAYMAS", "SANTA MARIA HUATULCO", 
+                "TIJUANA", "TLALIXTAQUILLA DE MALDONADO", "VILLA DE REYES", "PUEBLO NUEVO", "DURANGO", 
+                "JOSE AZUETA", "MIGUEL ALEMAN", "MIAHUATLAN DE PORFIRIO DIAZ", "MAZATLAN", "SAN ANTONIO CAÑADA", 
+                "SOMBRERETE", "TALPA DE ALLENDE", "ENSENADA", "MATAMOROS", "PICHUCALCO", "SAN CARLOS YAUTEPEC", 
+                "TECATE", "APATZINGAN", "MEXICALI", "MORELIA", "RIO BRAVO", "AQUILA", "BUENAVISTA", 
+                "JUCHIQUE DE FERRER", "ORIENTAL", "SINALOA", "ALTAMIRA", "COALCOMAN DE VAZQUEZ PALLARES", 
+                "EMPALME", "GUERRERO", "LA UNION DE ISIDORO M. DE OCA", "SAN PEDRO POCHUTLA", 
+                "SANTIAGO PAPASQUIARO", "TUXTLA GUTIERREZ", "XILITLA", "MOCORITO", "ASCENSION", "CINTALAPA", 
+                "FRANCISCO I. MADERO", "GOMEZ PALACIO", "HOSTOTIPAQUILLO", "HUETAMO", "SAN CARLOS", 
+                "SAN IGNACIO", "TUMBISCATIO", "ZINAPECUARO", "ALTOTONGA", "CENTRO (Villahermosa)", 
+                "JIUTEPEC", "LEONARDO BRAVO", "NAVOLATO", "SAN PEDRO LAGUNILLAS", "SANTA MARIA ZOQUITLIN", 
+                "TEPEHUANES", "ACAPULCO DE JUAREZ", "IXCAMILPA DE GUERRERO", "PERIBAN", "TACAMBARO", 
+                "CAJEME", "HALACHO", "LA HUACANA", "SAN DIONISIO DEL MAR", "SARIC", "TENANCINGO", 
+                "POZA RICA DE HIDALGO", "SAN DIMAS", "CUERNAVACA")
+
+Datos_DEFENSA_L <- Datos_DEFENSA_L |>  
+  filter(!(ESTADO == "NUEVO LEON" & MUNICIPIO %in% errores_nl)) |> 
+  mutate(MUNICIPIO = case_when(
+    ESTADO == "NUEVO LEON" & MUNICIPIO == "GENERAL TREVIÑO" ~ "GENERAL TREVINO",
+    TRUE ~ MUNICIPIO
+  ))
+
+analizar_bloque_estados(c("NUEVO LEON"), Datos_Esp_Mun, Datos_DEFENSA_L)
+```
+
+```{r}
+#| label: diagnostico-b-OAXACA
+
+analizar_bloque_estados(c("OAXACA"), Datos_Esp_Mun, Datos_DEFENSA_L)
+```
+
+OAXACA Variación de nombre "SAN PEDRO TOTOLAPA" -\> "SAN PEDRO TOTOLAPAM" "JUCHITAN DE ZARAGOZA" -\> "HEROICA CIUDAD DE JUCHITAN DE ZARAGOZA" "MATIAS ROMERO" -\> "MATIAS ROMERO AVENDANO" "SANTA MARIA ZOQUITLIN" -\> "SANTA MARIA ZOQUITLAN" "SAN DIONISIO OCOLTEPEC" -\> "SAN DIONISIO OCOTEPEC" "SAN BLAS ATEMPA" -\> "HEROICA VILLA DE SAN BLAS ATEMPA" "SANTA MARIA PEÑOLES" -\> "SANTA MARIA PENOLES" "LA COMPAÑÍA" -\> "LA COMPANIA" "SANTO TOMAS TAMAZULAPAM" -\> "SANTO TOMAS TAMAZULAPAN" "LA SOLEDAD" -\> "EL BARRIO DE LA SOLEDAD" "SAN JUAN MAZATLAN MIXE" -\> "SAN JUAN MAZATLAN" "SAN MIGUEL SOLA DE VEGA" -\> "VILLA SOLA DE VEGA" Prefijo aceptado "VILLA DE TUTUTEPEC DE MELCHOR OCAMPO" -\> "VILLA DE TUTUTEPEC" "SANTIAGO CHAZUMBA" -\> "VILLA DE SANTIAGO CHAZUMBA" "MGDNA. YODOCONO DE PRFRO. DIAZ" -\> "MAGDALENA YODOCONO DE PORFIRIO DIAZ" "VILLA HIDALGO" -\> "VILLA HIDALGO YALALAG"
+
+Error de registro "SANTA MARIA IXCOTEL" "COZUMEL" "AGUASCALIENTES" "VENUSTIANO CARRANZA" "SANTIAGO TILAPA" "ZAPOTITLAN DEL RIO" "SAN FRANCISCO TEJALAPAM"
+
+```{r}
+#| label: limpieza-b9-OAXACA
+
+Datos_DEFENSA_L <- Datos_DEFENSA_L |>  
+  filter(!(ESTADO == "OAXACA" & MUNICIPIO %in% c("COZUMEL", "AGUASCALIENTES", "VENUSTIANO CARRANZA", "SANTIAGO TILAPA", "SANTA MARIA IXCOTEL","ZAPOTITLAN DEL RIO","SAN FRANCISCO TEJALAPAM"))) |> 
+  mutate(MUNICIPIO = case_when(
+    ESTADO == "OAXACA" & MUNICIPIO == "SAN PEDRO TOTOLAPA"                   ~ "SAN PEDRO TOTOLAPAM",
+    ESTADO == "OAXACA" & MUNICIPIO == "JUCHITAN DE ZARAGOZA"                 ~ "HEROICA CIUDAD DE JUCHITAN DE ZARAGOZA",
+    ESTADO == "OAXACA" & MUNICIPIO == "MATIAS ROMERO"                        ~ "MATIAS ROMERO AVENDANO",
+    ESTADO == "OAXACA" & MUNICIPIO == "SANTA MARIA ZOQUITLIN"                ~ "SANTA MARIA ZOQUITLAN",
+    ESTADO == "OAXACA" & MUNICIPIO == "SAN DIONISIO OCOLTEPEC"               ~ "SAN DIONISIO OCOTEPEC",
+    ESTADO == "OAXACA" & MUNICIPIO == "SAN BLAS ATEMPA"                      ~ "HEROICA VILLA DE SAN BLAS ATEMPA",
+    ESTADO == "OAXACA" & MUNICIPIO == "SANTA MARIA PEÑOLES"                  ~ "SANTA MARIA PENOLES",
+    ESTADO == "OAXACA" & MUNICIPIO == "LA COMPAÑÍA"                          ~ "LA COMPANIA",
+    ESTADO == "OAXACA" & MUNICIPIO == "SANTO TOMAS TAMAZULAPAM"              ~ "SANTO TOMAS TAMAZULAPAN",
+    ESTADO == "OAXACA" & MUNICIPIO == "LA SOLEDAD"                           ~ "EL BARRIO DE LA SOLEDAD",
+    ESTADO == "OAXACA" & MUNICIPIO == "SAN JUAN MAZATLAN MIXE"               ~ "SAN JUAN MAZATLAN",
+    ESTADO == "OAXACA" & MUNICIPIO == "SAN MIGUEL SOLA DE VEGA"              ~ "VILLA SOLA DE VEGA",
+    ESTADO == "OAXACA" & MUNICIPIO == "VILLA DE TUTUTEPEC DE MELCHOR OCAMPO" ~ "VILLA DE TUTUTEPEC",
+    ESTADO == "OAXACA" & MUNICIPIO == "SANTIAGO CHAZUMBA"                    ~ "VILLA DE SANTIAGO CHAZUMBA",
+    ESTADO == "OAXACA" & MUNICIPIO == "MGDNA. YODOCONO DE PRFRO. DIAZ"       ~ "MAGDALENA YODOCONO DE PORFIRIO DIAZ",
+    ESTADO == "OAXACA" & MUNICIPIO == "VILLA HIDALGO"                        ~ "VILLA HIDALGO YALALAG",
+    TRUE ~ MUNICIPIO
+  ))
+
+analizar_bloque_estados(c("OAXACA"), Datos_Esp_Mun, Datos_DEFENSA_L)
+```
+
+```{r}
+#| label: diagnostico-b-PBLA
+
+analizar_bloque_estados(c("PUEBLA"), Datos_Esp_Mun, Datos_DEFENSA_L)
+```
+
+```{r}
+#| label: limpieza-b10-PUEBLA
+
+Datos_DEFENSA_L <- Datos_DEFENSA_L |>  
+  mutate(MUNICIPIO = case_when(
+    ESTADO == "PUEBLA" & MUNICIPIO == "SAN ANTONIO CAÑADA" ~ "SAN ANTONIO CANADA",
+    TRUE ~ MUNICIPIO))
+
+analizar_bloque_estados(c("PUEBLA"), Datos_Esp_Mun, Datos_DEFENSA_L)
+```
+
+```{r}
+#| label: diagnostico-b-QRO_QUNROO_SLP
+
+analizar_bloque_estados(c("QUERETARO","QUINTANA ROO","SAN LUIS POTOSI"), Datos_Esp_Mun, Datos_DEFENSA_L)
+```
+
+QUERETARO Variación de nombre "PEÑAMILLER" -\> "PENAMILLER"
+
+QUINTANA ROO Variación de nombre "SOLIDARIDAD" -\> "PLAYA DEL CARMEN" Antes era nombre oficial del municipio
+
+Error de registro: "CHETUMAL" En el sentido estricto de nuestra regla a pesar de que chetumal es conocido e indistingible entre nombre de cabezeras municipales, por regla se tiene que descartar.
+
+SAN LUIS POTOSI Variación de nombre "AHUALULCO" -\> "AHUALULCO DEL SONIDO 13" "TIERRANUEVA" -\> "TIERRA NUEVA"
+
+```{r}
+#| label: limpieza-b11-QRO-QROO-SLP
+
+Datos_DEFENSA_L <- Datos_DEFENSA_L |>  
+  mutate(MUNICIPIO = case_when(
+    ESTADO == "QUERETARO" & MUNICIPIO == "PEÑAMILLER"           ~ "PENAMILLER",
+    ESTADO == "QUINTANA ROO" & MUNICIPIO == "SOLIDARIDAD"       ~ "PLAYA DEL CARMEN",
+    ESTADO == "SAN LUIS POTOSI" & MUNICIPIO == "AHUALULCO"      ~ "AHUALULCO DEL SONIDO 13",
+    ESTADO == "SAN LUIS POTOSI" & MUNICIPIO == "TIERRANUEVA"    ~ "TIERRA NUEVA",
+    TRUE ~ MUNICIPIO
+  )) |> filter(!(ESTADO=="QUINTANA ROO" & MUNICIPIO=="CHETUMAL"))
+
+analizar_bloque_estados(c("QUERETARO", "QUINTANA ROO", "SAN LUIS POTOSI"), Datos_Esp_Mun, Datos_DEFENSA_L)
+```
+
+```{r}
+#| label: diagnostico-b-QRO_QUNROO_SINA
+
+analizar_bloque_estados(c("SINALOA","SONORA"), Datos_Esp_Mun, Datos_DEFENSA_L)
+```
+
+NOTA: A ver ya esto de los registros que apuntan a cabecera municipal y no al municipio está siendo muy frecuente, le comentaré al Doc
+
+SINALOA Ninguna variación de nombre.
+
+Error de registro "GUAMUCHIL" "SURUTATO" "AGUA PRIETA" "NO ESPECIFICADO SIN" "SAN JOSE DE GRACIA" "SANALONA"
+
+SONORA Variación de nombre "PUERTO PEÑASCO" -\> "PUERTO PENASCO"
+
+Error de registro "SONOYTA"
+
+```{r}
+#| label: limpieza-b12-SINALOA-SONORA
+
+Datos_DEFENSA_L <- Datos_DEFENSA_L |>  
+  filter(!(ESTADO == "SINALOA" & MUNICIPIO %in% c("AGUA PRIETA", "NO ESPECIFICADO SIN", "SAN JOSE DE GRACIA", "SANALONA", "SURUTATO", "GUAMUCHIL"))) |> 
+  filter(!(ESTADO == "SONORA" & MUNICIPIO == "SONOYTA")) |> 
+  mutate(MUNICIPIO = case_when(
+    ESTADO == "SONORA" & MUNICIPIO == "PUERTO PEÑASCO"~ "PUERTO PENASCO",
+    TRUE ~ MUNICIPIO))
+
+analizar_bloque_estados(c("SINALOA", "SONORA"), Datos_Esp_Mun, Datos_DEFENSA_L)
+```
+
+```{r}
+#| label: diagnostico-b-TAB_TAM
+
+analizar_bloque_estados(c("TABASCO","TAMAULIPAS","TLAXCALA"), Datos_Esp_Mun, Datos_DEFENSA_L)
+```
+
+TABASCO Variación de nombre "CENTRO (Villahermosa)" -\> "CENTRO" Error de registro "ARTEAGA" "FRONTERA COROZAL"
+
+TAMAULIPAS Todo en orden
+
+TLAXCALA Variación de nombre "ESPAÑITA" -\>"ESPANITA" "ALTZAYANCA"-\>"ATLTZAYANCA" "APETATITLAN DE A. CARVAJAL"-\>"APETATITLAN DE ANTONIO CARVAJAL" "IXTACUIXTLA DE M. MATAMOROS"-\>"IXTACUIXTLA DE MARIANO MATAMOROS" "XICOTZINGO"-\>"XICOHTZINCO"
+
+```{r}
+#| label: homologación de TAB_TAM_TLAX
+
+Datos_DEFENSA_L <- Datos_DEFENSA_L |>  mutate(MUNICIPIO = case_when(
+  ESTADO=="TLAXCALA" & MUNICIPIO=="ESPAÑITA"~"ESPANITA",
+  ESTADO=="TLAXCALA" & MUNICIPIO=="ALTZAYANCA"~"ATLTZAYANCA" ,
+  ESTADO=="TLAXCALA" & MUNICIPIO=="APETATITLAN DE A. CARVAJAL"~"APETATITLAN DE ANTONIO CARVAJAL",
+  ESTADO=="TLAXCALA" & MUNICIPIO=="IXTACUIXTLA DE M. MATAMOROS"~"IXTACUIXTLA DE MARIANO MATAMOROS",
+  ESTADO=="TLAXCALA" & MUNICIPIO=="XICOTZINGO"~"XICOHTZINCO" ,
+  ESTADO=="TABASCO" & MUNICIPIO=="CENTRO (Villahermosa)"~"CENTRO",TRUE~MUNICIPIO)) |> 
+  filter(!(ESTADO=="TABASCO" & MUNICIPIO %in% c("ARTEAGA","FRONTERA COROZAL")))
+
+analizar_bloque_estados(c("TABASCO","TAMAULIPAS","TLAXCALA"), Datos_Esp_Mun, Datos_DEFENSA_L)
+```
+
+```{r}
+#| label: diagnostico-b-VER
+
+analizar_bloque_estados(c("VERACRUZ"), Datos_Esp_Mun, Datos_DEFENSA_L)
+```
+
+VERACRUZ Variación de nombre "TEMAPACHE"-\>"ALAMO TEMAPACHE" "COSAMALOAPAN"-\>"COSAMALOAPAN DE CARPIO" "OZULUAMA DE MASCAREÑAS"-\>"OZULUAMA DE MASCARENAS" "HIDALGOTITLÃ\u0081N"-\>"HIDALGOTITLAN" "TLILAPA"-\>"TLILAPAN" "MEDELLIN" -\> "MEDELLIN DE BRAVO"
+
+Error de registro "CHINANTLA"
+
+```{r}
+#| label: homologación VERACRUZ
+
+Datos_DEFENSA_L <- Datos_DEFENSA_L |>  mutate(MUNICIPIO = case_when(
+  ESTADO=="VERACRUZ" & MUNICIPIO=="TEMAPACHE"~"ALAMO TEMAPACHE",
+  ESTADO=="VERACRUZ" & MUNICIPIO=="COSAMALOAPAN"~"COSAMALOAPAN DE CARPIO",
+  ESTADO=="VERACRUZ" & MUNICIPIO=="OZULUAMA DE MASCAREÑAS"~"OZULUAMA DE MASCARENAS",
+  ESTADO=="VERACRUZ" & MUNICIPIO=="HIDALGOTITLÃ\u0081N"~"HIDALGOTITLAN",
+  ESTADO=="VERACRUZ" & MUNICIPIO=="TLILAPA"~"TLILAPAN" ,
+  ESTADO=="VERACRUZ" & MUNICIPIO=="MEDELLIN" ~ "MEDELLIN DE BRAVO",
+  TRUE~MUNICIPIO)) |> filter(!(ESTADO=="VERACRUZ" & MUNICIPIO=="CHINANTLA"))
+
+analizar_bloque_estados(c("VERACRUZ"), Datos_Esp_Mun, Datos_DEFENSA_L)
+```
+
+YUCATAN ZACATECAS
+
+```{r}
+#| label: diagnostico-b-YUC_ZAC
+
+analizar_bloque_estados(c("YUCATAN","ZACATECAS"), Datos_Esp_Mun, Datos_DEFENSA_L)
+```
+
+YUCATAN Todo en orden
+
+ZACATECAS Variación de nombre "CAÑITAS DE FELIPE PESCADOR"\~"CANITAS DE FELIPE PESCADOR"
+
+```{r}
+#| label: homologación Yuc-Zaca
+Datos_DEFENSA_L <- Datos_DEFENSA_L |>  mutate(MUNICIPIO = case_when(
+  ESTADO=="ZACATECAS" & MUNICIPIO=="CAÑITAS DE FELIPE PESCADOR"~"CANITAS DE FELIPE PESCADOR",
+  TRUE~MUNICIPIO)) 
+
+analizar_bloque_estados(c("ZACATECAS"), Datos_Esp_Mun, Datos_DEFENSA_L)
+```
+
+## Revisión final
+
+Vamos a hacer una revisión final de la homologación de nombres municipales
+
+```{r}
+#| label: revisión final
+
+#| label: diagnostico-final-global
+
+analizar_bloque_estados(sort(unique(Datos_DEFENSA_L$ESTADO)), Datos_Esp_Mun, Datos_DEFENSA_L)
+```
+
+# Guardado de la base de datos
+
+```{r}
+#| label: Guardado Base de datos homologada y Catalogo INEGI OFICIAL 
+
+write_csv(Datos_DEFENSA_L,"../data/processed/Datos_DEFENSA_Homologados.csv") 
+st_write(Datos_Esp_Mun,"../data/processed/Datos_EspacialesMunicipales.shp") 
+```

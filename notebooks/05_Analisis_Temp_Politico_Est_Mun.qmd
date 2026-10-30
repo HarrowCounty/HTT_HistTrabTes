@@ -1,0 +1,315 @@
+---
+title: "Análisis Político Muncipal y Estatal de los registros de incautaciones"
+---
+
+```{r}
+#| label: Importación paquetes
+#| message: false
+library(sf)
+library(readxl)
+library(tidyverse)
+library(dplyr)
+library(here)
+library(ggplot2)
+library(patchwork)
+library(scales)
+library(plotly)
+library(stringi)
+```
+
+Este capítulo es para hacer un analísis temporal en terminos de:
+
+¿Qué partido político gobernaba en el estado y en el municipio en donde fué la incautación?
+
+La idea es ver si existe una tendencia
+
+```{r}
+#|label: Base de datos Defensa Homologados y Catalogo Municipal INEGI 
+
+ruta_DB_DEFENSA_ETP <- here::here("data","processed","Datos_DEFENSA_Politica_Homologada.csv")
+
+Datos_DEFENSA_ETP <- read_csv(ruta_DB_DEFENSA_ETP, guess_max = 50000)
+
+```
+Entonces haré 32 gráficas, una por estado.
+
+Cada gráfica tiene un panel por municipio, es decir, el número de paneles depende de cuántos municipios de ese estado tienen registros de incautación de cocaína.
+
+En cada panel, cada punto es un año con incautación registrada. La altura del punto es la cantidad de kilogramos incautados ese año, y su color es el partido político que gobernaba el municipio. El fondo de cada año es el partido político que gobernaba el estado. Los puntos no se unen con líneas, porque no se asume nada de los años intermedios: un año sin punto significa que no hay incautación registrada.
+
+
+# Análisi Cocaina
+```{r}
+#| label: Analisis Temporal Politico Cocaina
+#| fig-width: 16
+#| fig-height: 30
+#| warning: false
+#| message: false
+
+#CATÁLOGO DE COLORES 
+# Se usan dos catálogos: colores fuertes para los puntos (municipal) y tonos pálidos para el fondo (estatal).
+# Así el punto siempre se distingue del fondo, aunque sean del mismo partido.
+colores_punto <- c(
+  "MORENA" = "#8E1B3A",  "COALICIÓN MORENA" = "#D6336C",
+  "PAN"    = "#1F5FBF",  "COALICIÓN PAN"    = "#5DADE2",
+  "PRI"    = "#2E9E4F",  "COALICIÓN PRI"    = "#7DCEA0",
+  "PRD"    = "#F2C200",  "COALICIÓN PRD"    = "#F9E076",
+  "MC"     = "#F28C28",  "COALICIÓN MC"     = "#F8B878",
+  "PVEM"   = "#6AA121",  "COALICIÓN PVEM"   = "#B5D96B",
+  "PT"     = "#C0392B",  "COALICIÓN PT"     = "#E8908A",
+  "OTROS"  = "#8C8C8C"   # partidos chicos, locales, independientes, etc.
+)
+
+colores_fondo <- c(
+  "MORENA" = "#E8C5CF",  "COALICIÓN MORENA" = "#F4E3E8",
+  "PAN"    = "#C5D8F2",  "COALICIÓN PAN"    = "#E3EDF9",
+  "PRI"    = "#C5E6D0",  "COALICIÓN PRI"    = "#E3F3E8",
+  "PRD"    = "#FBF0B8",  "COALICIÓN PRD"    = "#FDF8DC",
+  "MC"     = "#FADDBF",  "COALICIÓN MC"     = "#FDEEDF",
+  "PVEM"   = "#DCEDB8",  "COALICIÓN PVEM"   = "#EEF6DC",
+  "PT"     = "#F2C8C4",  "COALICIÓN PT"     = "#F9E4E2",
+  "OTROS"  = "#E3E3E3"
+)
+
+#FUNCIÓN QUE SIMPLIFICA EL PARTIDO 
+limpia_partido <- function(x) {
+  # Toma el texto antes del primer guion ("pvem-pt-morena" -> "pvem") y lo pone en mayúsculas
+  primero <- str_to_upper(str_extract(x, "^[^-]+"))
+  # Si ese partido está en el catálogo se queda, si no se llama "OTROS"
+  base <- if_else(primero %in% c("MORENA","PAN","PRI","PRD","MC","PVEM","PT"), primero, "OTROS")
+  # Si el texto original tenía guion es coalición: se agrega "COALICIÓN " al inicio
+  if_else(str_detect(x, "-") & base != "OTROS", paste("COALICIÓN", base), base)
+}
+
+#PUNTOS: cocaína por municipio y año
+puntos <- Datos_DEFENSA_ETP |>
+  filter(DROGA == "COCAINA") |>                                # solo cocaína
+  mutate(PartidoMun = limpia_partido(PartidoElectoMun)) |>     # partido municipal simplificado
+  group_by(ESTADO, MUNICIPIO, AÑO) |>                          # un renglón por municipio y año
+  summarise(
+    Total_Kgs  = sum(KGS., na.rm = TRUE),                      # suma de kg de ese año
+    PartidoMun = PartidoMun[which.max(KGS.)],                  # si hay 2 partidos en el año, el del registro con más kg
+    .groups = "drop"
+  )
+
+#FONDO: partido estatal por estado y año 
+# Se toma de TODOS los registros (cualquier droga y municipio) porque el
+# gobierno estatal es el mismo para todo el estado en un año dado.
+estatal <- Datos_DEFENSA_ETP |>
+  mutate(PartidoEst = limpia_partido(PartidoElectoEst)) |>
+  distinct(ESTADO, AÑO, PartidoEst)                            # un renglón por estado-año-partido
+
+# Revisión: debe salir vacío. Si sale algo, hay dos partidos en un mismo estado-año.
+estatal |> count(ESTADO, AÑO) |> filter(n > 1)
+
+# Repite el fondo del estado en cada uno de sus municipios
+fondo <- puntos |>
+  distinct(ESTADO, MUNICIPIO) |>
+  inner_join(estatal, by = "ESTADO", relationship = "many-to-many")
+
+#GRÁFICA POR ESTADO
+plot_estado <- function(est) {
+  ggplot() +
+    # Fondo: un rectángulo por año, coloreado con el partido estatal (sin alpha, el color ya es pálido)
+    geom_rect(data = filter(fondo, ESTADO == est),
+              aes(xmin = AÑO - 0.5, xmax = AÑO + 0.5, ymin = -Inf, ymax = Inf, fill = PartidoEst)) +
+    # Puntos: primero un punto negro más grande, que funciona como contorno (sin color en aes, no genera leyenda)
+    geom_point(data = filter(puntos, ESTADO == est),
+               aes(AÑO, Total_Kgs), color = "black", size = 3.6) +
+    # Puntos: encima, un punto por año con incautación, coloreado con el partido municipal
+    geom_point(data = filter(puntos, ESTADO == est),
+               aes(AÑO, Total_Kgs, color = PartidoMun), size = 2.6) +
+    # Un panel por municipio; con ncol = 4 caben en 4 columnas
+    facet_wrap(~ MUNICIPIO, ncol = 4, scales = "free_y",
+               labeller = label_wrap_gen(width = 20)) +
+    scale_fill_manual(values = colores_fondo) +                # usa el catálogo pálido para el fondo
+    scale_color_manual(values = colores_punto) +               # usa el catálogo fuerte para los puntos
+    scale_x_continuous(breaks = seq(2005, 2025, by = 5)) +     # un número cada 5 años para que no se encimen
+    scale_y_continuous(labels = scales::comma) +               # kg con separador de miles
+    labs(title = paste("Cocaína asegurada -", est),
+         subtitle = "Fondo = partido estatal | Punto = partido municipal | Sin punto = sin incautación",
+         fill = "Partido estatal (fondo)", color = "Partido municipal (punto)",
+         x = "Año", y = "Kg") +
+    theme_minimal() +
+    theme(legend.position = "bottom",
+          strip.text = element_text(size = 8, face = "bold"),  
+          panel.spacing = unit(1, "lines"))                    
+}
+
+#IMPRIME UNA GRÁFICA POR ESTADO 
+walk(unique(puntos$ESTADO), ~ print(plot_estado(.x)))
+```
+
+# Análsis METANFETAMINA
+```{r}
+#| label: Analisis Temporal Politico Metanfetamina
+#| fig-width: 16
+#| fig-height: 30
+#| warning: false
+#| message: false
+
+#PUNTOS: metanfetamina por municipio y año
+puntos_meta <- Datos_DEFENSA_ETP |>
+  filter(DROGA == "METANFETAMINA", !is.na(KGS.)) |>            # solo metanfetamina, y solo registros medidos en kg
+  mutate(PartidoMun = limpia_partido(PartidoElectoMun)) |>     # partido municipal simplificado
+  group_by(ESTADO, MUNICIPIO, AÑO) |>                          # un renglón por municipio y año
+  summarise(
+    Total_Kgs  = sum(KGS.),                                    # suma de kg de ese año
+    PartidoMun = PartidoMun[which.max(KGS.)],                  # si hay 2 partidos en el año, el del registro con más kg
+    .groups = "drop"
+  )
+
+#FONDO: se usa el mismo "estatal" del bloque de cocaína
+# Repite el fondo del estado en cada uno de sus municipios con metanfetamina
+fondo_meta <- puntos_meta |>
+  distinct(ESTADO, MUNICIPIO) |>
+  inner_join(estatal, by = "ESTADO", relationship = "many-to-many")
+
+#GRÁFICA POR ESTADO
+plot_estado_meta <- function(est) {
+  ggplot() +
+    # Fondo: un rectángulo por año, coloreado con el partido estatal
+    geom_rect(data = filter(fondo_meta, ESTADO == est),
+              aes(xmin = AÑO - 0.5, xmax = AÑO + 0.5, ymin = -Inf, ymax = Inf, fill = PartidoEst)) +
+    # Puntos: primero un punto negro más grande, que funciona como contorno
+    geom_point(data = filter(puntos_meta, ESTADO == est),
+               aes(AÑO, Total_Kgs), color = "black", size = 3.6) +
+    # Puntos: encima, un punto por año con incautación, coloreado con el partido municipal
+    geom_point(data = filter(puntos_meta, ESTADO == est),
+               aes(AÑO, Total_Kgs, color = PartidoMun), size = 2.6) +
+    # Un panel por municipio; con ncol = 4 caben en 4 columnas
+    facet_wrap(~ MUNICIPIO, ncol = 4, scales = "free_y",
+               labeller = label_wrap_gen(width = 20)) +
+    scale_fill_manual(values = colores_fondo) +                # catálogo pálido para el fondo
+    scale_color_manual(values = colores_punto) +               # catálogo fuerte para los puntos
+    scale_x_continuous(breaks = seq(2005, 2025, by = 5)) +     # un número cada 5 años para que no se encimen
+    scale_y_continuous(labels = scales::comma) +               # kg con separador de miles
+    labs(title = paste("Metanfetamina asegurada -", est),
+         subtitle = "Fondo = partido estatal | Punto = partido municipal | Sin punto = sin incautación",
+         fill = "Partido estatal (fondo)", color = "Partido municipal (punto)",
+         x = "Año", y = "Kg") +
+    theme_minimal() +
+    theme(legend.position = "bottom",
+          strip.text = element_text(size = 8, face = "bold"),
+          panel.spacing = unit(1, "lines"))
+}
+
+#IMPRIME UNA GRÁFICA POR ESTADO
+walk(unique(puntos_meta$ESTADO), ~ print(plot_estado_meta(.x)))
+```
+
+# Análisis HEROINA
+```{r}
+#| label: Analisis Temporal Politico Heroina
+#| fig-width: 16
+#| fig-height: 30
+#| warning: false
+#| message: false
+
+#PUNTOS: heroína por municipio y año
+puntos_heroina <- Datos_DEFENSA_ETP |>
+  filter(DROGA == "HEROINA", !is.na(KGS.)) |>                                # solo heroína
+  mutate(PartidoMun = limpia_partido(PartidoElectoMun)) |>     # partido municipal simplificado
+  group_by(ESTADO, MUNICIPIO, AÑO) |>                          # un renglón por municipio y año
+  summarise(
+    Total_Kgs  = sum(KGS., na.rm = TRUE),                      # suma de kg de ese año
+    PartidoMun = PartidoMun[which.max(KGS.)],                  # si hay 2 partidos en el año, el del registro con más kg
+    .groups = "drop"
+  )
+
+#FONDO: se usa el mismo "estatal" del bloque de cocaína
+# Repite el fondo del estado en cada uno de sus municipios con heroína
+fondo_heroina <- puntos_heroina |>
+  distinct(ESTADO, MUNICIPIO) |>
+  inner_join(estatal, by = "ESTADO", relationship = "many-to-many")
+
+#GRÁFICA POR ESTADO
+plot_estado_heroina <- function(est) {
+  ggplot() +
+    # Fondo: un rectángulo por año, coloreado con el partido estatal
+    geom_rect(data = filter(fondo_heroina, ESTADO == est),
+              aes(xmin = AÑO - 0.5, xmax = AÑO + 0.5, ymin = -Inf, ymax = Inf, fill = PartidoEst)) +
+    # Puntos: primero un punto negro más grande, que funciona como contorno
+    geom_point(data = filter(puntos_heroina, ESTADO == est),
+               aes(AÑO, Total_Kgs), color = "black", size = 3.6) +
+    # Puntos: encima, un punto por año con incautación, coloreado con el partido municipal
+    geom_point(data = filter(puntos_heroina, ESTADO == est),
+               aes(AÑO, Total_Kgs, color = PartidoMun), size = 2.6) +
+    # Un panel por municipio; con ncol = 4 caben en 4 columnas
+    facet_wrap(~ MUNICIPIO, ncol = 4, scales = "free_y",
+               labeller = label_wrap_gen(width = 20)) +
+    scale_fill_manual(values = colores_fondo) +                # catálogo pálido para el fondo
+    scale_color_manual(values = colores_punto) +               # catálogo fuerte para los puntos
+    scale_x_continuous(breaks = seq(2005, 2025, by = 5)) +     # un número cada 5 años para que no se encimen
+    scale_y_continuous(labels = scales::comma) +               # kg con separador de miles
+    labs(title = paste("Heroína asegurada -", est),
+         subtitle = "Fondo = partido estatal | Punto = partido municipal | Sin punto = sin incautación",
+         fill = "Partido estatal (fondo)", color = "Partido municipal (punto)",
+         x = "Año", y = "Kg") +
+    theme_minimal() +
+    theme(legend.position = "bottom",
+          strip.text = element_text(size = 8, face = "bold"),
+          panel.spacing = unit(1, "lines"))
+}
+
+#IMPRIME UNA GRÁFICA POR ESTADO
+walk(unique(puntos_heroina$ESTADO), ~ print(plot_estado_heroina(.x)))
+```
+
+# Análisis MARIGUANA
+```{r}
+#| label: Analisis Temporal Politico Mariguana
+#| fig-width: 16
+#| fig-height: 30
+#| warning: false
+#| message: false
+
+#PUNTOS: mariguana por municipio y año
+puntos_mariguana <- Datos_DEFENSA_ETP |>
+  filter(DROGA == "MARIGUANA") |>                              # solo mariguana
+  mutate(PartidoMun = limpia_partido(PartidoElectoMun)) |>     # partido municipal simplificado
+  group_by(ESTADO, MUNICIPIO, AÑO) |>                          # un renglón por municipio y año
+  summarise(
+    Total_Kgs  = sum(KGS., na.rm = TRUE),                      # suma de kg de ese año
+    PartidoMun = PartidoMun[which.max(KGS.)],                  # si hay 2 partidos en el año, el del registro con más kg
+    .groups = "drop"
+  )
+
+#FONDO: se usa el mismo "estatal" del bloque de cocaína
+# Repite el fondo del estado en cada uno de sus municipios con mariguana
+fondo_mariguana <- puntos_mariguana |>
+  distinct(ESTADO, MUNICIPIO) |>
+  inner_join(estatal, by = "ESTADO", relationship = "many-to-many")
+
+#GRÁFICA POR ESTADO
+plot_estado_mariguana <- function(est) {
+  ggplot() +
+    # Fondo: un rectángulo por año, coloreado con el partido estatal
+    geom_rect(data = filter(fondo_mariguana, ESTADO == est),
+              aes(xmin = AÑO - 0.5, xmax = AÑO + 0.5, ymin = -Inf, ymax = Inf, fill = PartidoEst)) +
+    # Puntos: primero un punto negro más grande, que funciona como contorno
+    geom_point(data = filter(puntos_mariguana, ESTADO == est),
+               aes(AÑO, Total_Kgs), color = "black", size = 3.6) +
+    # Puntos: encima, un punto por año con incautación, coloreado con el partido municipal
+    geom_point(data = filter(puntos_mariguana, ESTADO == est),
+               aes(AÑO, Total_Kgs, color = PartidoMun), size = 2.6) +
+    # Un panel por municipio; con ncol = 4 caben en 4 columnas
+    facet_wrap(~ MUNICIPIO, ncol = 4, scales = "free_y",
+               labeller = label_wrap_gen(width = 20)) +
+    scale_fill_manual(values = colores_fondo) +                # catálogo pálido para el fondo
+    scale_color_manual(values = colores_punto) +               # catálogo fuerte para los puntos
+    scale_x_continuous(breaks = seq(2005, 2025, by = 5)) +     # un número cada 5 años para que no se encimen
+    scale_y_continuous(labels = scales::comma) +               # kg con separador de miles
+    labs(title = paste("Mariguana asegurada -", est),
+         subtitle = "Fondo = partido estatal | Punto = partido municipal | Sin punto = sin incautación",
+         fill = "Partido estatal (fondo)", color = "Partido municipal (punto)",
+         x = "Año", y = "Kg") +
+    theme_minimal() +
+    theme(legend.position = "bottom",
+          strip.text = element_text(size = 8, face = "bold"),
+          panel.spacing = unit(1, "lines"))
+}
+
+#IMPRIME UNA GRÁFICA POR ESTADO
+walk(unique(puntos_mariguana$ESTADO), ~ print(plot_estado_mariguana(.x)))
+```

@@ -1,21 +1,37 @@
 project:
   type: book
+  output-dir: docs  
 
 book:
-  title: "HTT_HistTrabTes"
-  author: "Norah Jones"
-  date: "18/10/2026"
+  title: "HTT_HistorialTrabajoTesis"
+  author: "Erick Zúñiga"
+  date: "18/10/2026" 
+  sidebar:
+    collapse-level: 1
   chapters:
     - index.qmd
     - intro.qmd
     - summary.qmd
-    - notebooks/01_Datos.qmd
+    - notebooks/01_Datos_Estatales.qmd
+    - notebooks/02_Datos_Municipales.qmd
+    - notebooks/03_Datos_Elecciones_Estatales_Municipales.qmd
+    - notebooks/04_Analisis_Esp_Temp_Est_Mun.qmd
+    - notebooks/05_Analisis_Temp_Politico_Est_Mun.qmd
     - references.qmd
 
 bibliography: references.bib
 
 format:
   html:
+    lightbox: true
+    toc: true
+    toc-location: left
+    toc-depth: 3
+    page-layout: full      
+    grid:
+      sidebar-width: 250px 
+      body-width: 1400px   
+      margin-width: 0px
     theme:
       - cosmo
       - brand
@@ -23,4 +39,5 @@ format:
     documentclass: scrreprt
 
 editor: visual
+
 

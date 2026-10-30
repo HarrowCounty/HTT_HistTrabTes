@@ -1,0 +1,685 @@
+---
+title: "Análisis Espacial, Temporal Estatal y Municipal"
+---
+
+
+```{r}
+#| label: Importación paquetes
+#| message: false
+library(sf)
+library(readxl)
+library(tidyverse)
+library(dplyr)
+library(here)
+library(ggplot2)
+library(patchwork)
+library(scales)
+library(plotly)
+library(stringi)
+```
+
+
+Este capítulo está pensado para recuperar el análisis hecho en el capítulo 1 pensando
+que ahora la base de datos está homologada a nivel Estatal,Municipal.
+
+Se usarán las bases de datos Datos_DEFENSA_Politica_Homologada y Datos espaciañes municipales
+del INEGI
+
+```{r}
+#|label: Base de datos Defensa Homologados y Catalogo Municipal INEGI 
+
+ruta_DB_DEFENSA_ETP <- here::here("data","processed","Datos_DEFENSA_Politica_Homologada.csv")
+
+Datos_DEFENSA_ETP <- read_csv(ruta_DB_DEFENSA_ETP, guess_max = 50000)
+
+ruta_datos_Municipales <- here::here("data","processed","Datos_EspacialesMunicipales.shp")
+
+Datos_Esp_Mun <- st_read(ruta_datos_Municipales)
+
+ruta_datos_Est <- here::here("data","processed","mapa_Estatal.shp")
+
+Datos_Esp_Est <- st_read(ruta_datos_Est)
+
+head(Datos_DEFENSA_ETP)
+head(Datos_Esp_Mun)
+head(Datos_Esp_Est)
+```
+
+## Estadística descriptiva DEFENSA
+
+### Gráficos generales de incautación
+
+```{r}
+#| label: Gráficas Totales y promedios
+#| fig-height: 6
+#| fig-width: 14
+
+total_promedio <- Datos_DEFENSA_ETP |> group_by(AÑO,DROGA,ESTADO) |> summarise(
+  Total_Kg  = sum(KGS.,na.rm = TRUE), 
+  Total_Lt =sum(LTS.,na.rm = TRUE), 
+  Total_Amp = sum(AMPOLLETA,na.rm = TRUE), 
+  Total_Uni = sum(UNIDADES,na.rm = TRUE), 
+  Prom_Kg = mean(KGS.,na.rm=TRUE),
+  Prom_Lt = mean(LTS.,na.rm=TRUE),
+  Prom_Amp = mean(AMPOLLETA,na.rm=TRUE),
+  Prom_Uni = mean(UNIDADES,na.rm=TRUE),
+  n = n(),
+  .groups = "drop")
+
+gtp1<-ggplot(total_promedio, aes(x=AÑO, y= Total_Kg, fill=DROGA))+geom_col()+labs(y="Total de Kg de droga incautado",x="AÑO", title="Total de  KG de Droga Incautado por año")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+gtp2 <- ggplot(total_promedio,aes(x=AÑO,y=Total_Lt,fill=DROGA))+geom_col()+labs(y="Litros de Droga",x="Año",title="Litros de droga incautada por año Escala Pseudo Log10")+scale_y_continuous(trans = pseudo_log_trans(base = 10))+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+gtp3 <- ggplot(total_promedio, aes(x=AÑO,y=Total_Amp, fill=DROGA))+geom_col()+labs(y="Ampolletas de Droga",x="Año",title="Ampolletas de droga incautada por año Escala Pseudo Log10")+scale_y_continuous(trans = pseudo_log_trans(base = 10))+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+gtp4 <- ggplot(total_promedio,aes(x=AÑO, y=Total_Uni, fill = DROGA))+geom_col()+labs(y="Unidades de Droga",x="Año",title="Unidades de droga incautada por año Escala Pseudo Log10")+scale_y_continuous(trans = pseudo_log_trans(base = 10))+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+(gtp1+gtp2)/(gtp3+gtp4)
+```
+
+Es importante notar que las única droga que se incautan en la modalidad de Ampolleta y Unidades es el FENTANILO. Me hace pensar que hay pocos estados en los que se incauta, vamos a revisarlo
+
+```{r}
+#| label: Estados que incautan fentanilo
+#| fig-width: 14
+
+IF1<-ggplot(total_promedio |>  filter(DROGA=="FENTANILO", Total_Amp != 0),aes(x=AÑO,y=Total_Amp,fill = ESTADO))+geom_col()+labs(
+  x="Año",y="Numero de ampolletas",title="Ampolletas de Fentanilo Incautadas por estado")
+IF2<-ggplot(total_promedio |>  filter(DROGA=="FENTANILO", Total_Uni > 0),aes(x=AÑO,y=Total_Uni,fill = ESTADO))+geom_col()+labs(
+  x="Año",y="Numero de Unidades",title="Unidades de Fentanilo Incautadas por estado")
+
+IF1+IF2
+
+#Estados sin incautación de fentanilo en formato Unidad
+
+print("Estados sin incautación de fentanilo en formato Unidad")
+setdiff(unique(Datos_DEFENSA_ETP$ESTADO),
+        unique((total_promedio |> filter(DROGA=="FENTANILO",Total_Uni > 0))$ESTADO))
+
+```
+
+Si bien hay pocos estados donde se ha comercializado el fentanilo en formato ampolleta, la incautación de fentanilo en formado unidad parece tener presencia en casi todos los estados de la república a excepción de Guerrero, Michoacán, Oaxaca, Yucatan, Tlaxcala.
+
+### Incautación por estado
+
+```{R}
+#| label: Frecuencia de Incautación de droga por estado
+
+ggplot(total_promedio, aes(x=reorder(ESTADO,-n,FUN=sum),y=n,fill=DROGA))+geom_col()+
+  theme(axis.text.x = element_text(angle = 70, hjust = 1))+labs(x = "Estado", y = "Número de eventos (n)", title = "Frecuencia de incautaciones por estado")
+```
+
+### Análisis de series de tiempo y tendencia
+
+Los siguientes gráficos son para ver como cambia la incautación de la droga a lo largo de los años o si hay patrones según el mes.
+
+Para ser mas simples a partir de aquí la exploración de datos solo se hará en el formato Kgs y Lts, dejando fuera las incautaciones en ampolletas y unidades.
+
+```{r}
+#| label: Serie de incautación por año
+#| fig-high: 10
+#| fig-width: 16
+
+incautacion_anual <- Datos_DEFENSA_ETP |> group_by(AÑO,DROGA) |>  summarise(
+  #Resumen por AME: Año
+  n=n(),
+  Kgs_A = sum(KGS., na.rm = TRUE),
+  Lts_A = sum(LTS.,na.rm = TRUE),
+  .groups = "drop"
+)
+
+IA1<-ggplot(incautacion_anual,aes(x=AÑO, y=Kgs_A, color=DROGA, group = DROGA))+geom_line(linewidth = 1)+geom_point()+
+  theme(axis.text.x = element_text(angle = 70, hjust = 1))+labs(x = "Año", y = "Kilogramos asegurados",title = "Incautación anual de droga")
+IA2<-ggplot(incautacion_anual,aes(x=AÑO, y=Kgs_A, color=DROGA, group = DROGA))+geom_line(linewidth = 1)+geom_point()+
+  theme(axis.text.x = element_text(angle = 70, hjust = 1))+scale_y_continuous(trans = pseudo_log_trans(base = 10))+labs(x = "Año", y = "Kilogramos asegurados",title = "Incautación anual de droga Pseudo Log 10")
+
+IA3<-ggplot(incautacion_anual,aes(x=AÑO, y=Lts_A, color=DROGA, group = DROGA))+geom_line(linewidth = 1)+geom_point()+
+  theme(axis.text.x = element_text(angle = 70, hjust = 1))+labs(x = "Año", y = "Litros asegurados",title = "Incautación anual de droga")
+IA4<-ggplot(incautacion_anual,aes(x=AÑO, y=Lts_A, color=DROGA, group = DROGA))+geom_line(linewidth = 1)+geom_point()+
+  theme(axis.text.x = element_text(angle = 70, hjust = 1))+scale_y_continuous(trans = pseudo_log_trans(base = 10))+labs(x = "Año", y = "Litros asegurados",title = "Incautación anual de droga Pseudo Log 10")
+
+
+(IA1+IA3)/(IA2+IA4)
+
+```
+
+Revisando detalles asombra el tipo de droga de AMAPOLA que solo cuenta con presencia en el 2020. Vamos a ver los registros
+
+```{r}
+#| label: Registros de Amapola
+
+head(Datos_DEFENSA_ETP |> filter(DROGA=="AMAPOLA"))
+```
+
+Solo hay un registro de amapola, fue en el año de 2020 en Querétaro en particular 1.82 Kgs
+
+También quiero pensar que el pico de metanfetamina en litros en el año 2018 corresponde a una única incautación-registro
+
+```{r}
+#| label: incautación atípica de metanfetamina en Lts
+
+head(Datos_DEFENSA_ETP |>  filter(DROGA=="METANFETAMINA",AÑO=="2018",LTS.!=0))
+```
+
+Pues no, se debe a varias, la de mayor importancia son 2018 FEBRERO DURANGO TAMAZULA y 2018 ENERO SINALOA CULIACAN.
+
+```{r}
+#| label: boxplot incautaciones por año
+#| fig-heigth: 14
+#| fig-weigh: 8
+
+datos_bplt <- Datos_DEFENSA_ETP 
+
+ggplot(datos_bplt,aes(x=factor(AÑO),y=KGS.,fill = DROGA))+geom_boxplot(show.legend = FALSE)+facet_wrap(~DROGA,scales="free_y",ncol=3)+theme(axis.text.x = element_text(angle = 90, hjust = 1))+labs(title = "Distribución anual de incautaciones por tipo de droga",
+    x = "Año",y = "Kilogramos asegurados")+scale_y_continuous(trans = pseudo_log_trans(base = 10))
+```
+
+```{r}
+#| label: Incautaciones por mes
+#| fig-width: 10
+#| fig-height: 14
+#| dpi: 300
+
+meses_ordenados <- c(
+  "ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO",
+  "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"
+)
+
+incautacion_mensual <- Datos_DEFENSA_ETP |>  group_by(MES,DROGA) |> summarise(
+  Kgs_M = sum(KGS., na.rm = TRUE),
+  Lts_M = sum(LTS., na.rm = TRUE),
+  .groups = "drop"
+) |> mutate(MES = factor(MES, levels = meses_ordenados))
+
+IM1<-ggplot(incautacion_mensual, aes(x=MES, y=Kgs_M, fill = DROGA))+
+  geom_col(show.legend = FALSE, color = "white", linewidth = 0.2)+
+  coord_polar(theta = "x")+labs(title = "Patrón cíclico mensual de incautaciones",x = NULL,
+    y = "Kilogramos asegurados")+facet_wrap(~ DROGA, scales = "free_y")+scale_x_discrete(labels = function(x) abbreviate(x, minlength = 3)) 
+
+
+IM2<-ggplot(incautacion_mensual, aes(x=MES, y=Lts_M, fill = DROGA))+
+  geom_col(show.legend = FALSE, color = "white", linewidth = 0.2)+
+  coord_polar(theta = "x")+labs(title = "Patrón cíclico mensual de incautaciones",x = NULL,
+    y = "Litros asegurados")+facet_wrap(~ DROGA, scales = "free_y")+scale_x_discrete(labels = function(x) abbreviate(x, minlength = 3))
+
+IM1/IM2
+```
+
+## Base de datos espaciales INEGI ESTATALES
+
+La base de datos del INEGI compone datos Estatales y datos Municipales, primero trataremos los datos en su forma estatal.
+
+```{r}
+#| label: Espacial Estatal Anual y temporalidad mensual
+
+Df_Mapa_Def_Edo <- Datos_Esp_Est |>  left_join(Datos_DEFENSA_ETP |> group_by(ESTADO,DROGA) |> 
+                                                summarise(
+                                                  Total_Kgs = sum(KGS.,na.rm = TRUE),
+                                                  Total_Lts = sum(LTS., na.rm = TRUE),
+                                                  .groups = "drop"
+                                                ) |> 
+                                                complete(ESTADO = unique(Datos_Esp_Est$NOMGEO),
+                                                         DROGA= unique(Datos_DEFENSA_ETP$DROGA)), 
+                                              by=c("NOMGEO" = "ESTADO"))
+
+
+Df_Mapa_Def_Mes <- Datos_Esp_Est |> left_join(Datos_DEFENSA_ETP |> group_by(ESTADO,DROGA,MES) |> 
+                                    summarise(Total_Kgs = sum(KGS.,na.rm = TRUE),
+                                              Total_Lts = sum(LTS.,na.rm = TRUE),
+                                                .groups = "drop") |> 
+                                     complete( ESTADO = unique(Datos_Esp_Est$NOMGEO),
+                                               DROGA = unique(Datos_DEFENSA_ETP$DROGA),
+                                                MES = unique(Datos_DEFENSA_ETP$MES)), 
+                                     by = c("NOMGEO"="ESTADO") )
+Df_Mapa_Def_Mes <- Df_Mapa_Def_Mes |> mutate(
+    MES = factor(MES, levels = c("ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO",
+           "JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE")))
+
+
+Df_Mapa_Def_Año <- Datos_Esp_Est |> left_join(Datos_DEFENSA_ETP |> group_by(ESTADO,DROGA,AÑO) |> 
+                                    summarise(Total_Kgs = sum(KGS.,na.rm = TRUE),
+                                              Total_Lts = sum(LTS.,na.rm = TRUE),
+                                                .groups = "drop") |> 
+                                     complete( ESTADO = unique(Datos_Esp_Est$NOMGEO),
+                                               DROGA = unique(Datos_DEFENSA_ETP$DROGA),
+                                                AÑO = unique(Datos_DEFENSA_ETP$AÑO)), 
+                                     by = c("NOMGEO"="ESTADO") )
+
+```
+
+## Graficas Espaciales y temporales Estatales
+
+```{r}
+#| label: grafica Total de Kgs Incautados por estado historico
+#| fig-width: 12
+#| fig-height: 14
+#| fig-dpi: 200
+
+ggplot(data = Df_Mapa_Def_Edo)+
+  geom_sf(aes(fill=Total_Kgs))+facet_wrap(~DROGA, ncol=3)+
+  scale_fill_viridis_c(option = "plasma", trans = "log1p", na.value = "grey90",
+    breaks = c(0, 10, 100, 1000, 10000, 100000, 1000000),
+    labels = scales::label_number(scale_cut = scales::cut_short_scale()))+
+  theme_minimal() +
+  labs(title = "Aseguramiento por Tipo de Droga (Gris estados sin registro)",
+    fill = "Kgs (Log)")+
+  geom_sf_text(aes(label = abbreviate(NOMGEO, minlength = 3)),size = 1,color = "black")+
+  theme(axis.text = element_blank(),legend.position = "bottom",legend.key.width = unit(2.5, "cm"))
+```
+
+```{r}
+#| label: grafica Total de Lts Incautados por estado historico
+#| fig-width: 12
+#| fig-height: 14
+#| fig-dpi: 200
+
+ggplot(data = Df_Mapa_Def_Edo)+
+  geom_sf(aes(fill=Total_Lts,text = paste("Estado:", NOMGEO, "<br>Kgs:", Total_Lts)))+facet_wrap(~DROGA, ncol=3)+
+  scale_fill_viridis_c(option = "plasma", trans = "log1p", na.value = "grey90",
+    breaks = c(0, 10, 100, 1000, 10000, 100000, 1000000),
+    labels = scales::label_number(scale_cut = scales::cut_short_scale()))+
+  theme_minimal() +
+  labs(title = "Aseguramiento por Tipo de Droga (Gris estados sin registro)",
+    fill = "Lts (Log)")+
+  geom_sf_text(aes(label = abbreviate(NOMGEO, minlength = 3)),size = 1,color = "black")+
+  theme(axis.text = element_blank(),legend.position = "bottom",legend.key.width = unit(2.5, "cm"))
+```
+
+### Estacionalidad de Aseguramientos
+
+A continuación, selecciona el tipo de droga para visualizar su comportamiento histórico mensual en el territorio nacional.
+
+```{r}
+#| label: estacionalidad mensual COCAINA
+#| fig-width: 12
+#| fig-height: 14
+#| fig-dpi: 200
+
+ggplot(data = Df_Mapa_Def_Mes |>  filter(DROGA=="COCAINA"))+
+  geom_sf(aes(fill=Total_Kgs))+facet_wrap(~MES, ncol=4)+
+  scale_fill_viridis_c(option = "plasma", trans = "log1p", na.value = "grey90",
+    breaks = c(0, 10, 100, 1000, 10000, 100000, 1000000),
+    labels = scales::label_number(scale_cut = scales::cut_short_scale()))+
+  theme_minimal() +
+  labs(title = "Aseguramiento De cocaina Temporalidad Mensual (Gris estados sin registro)",
+    fill = "Kgs (Log)")+
+  geom_sf_text(aes(label = abbreviate(NOMGEO, minlength = 3)),size = 1,color = "black")+
+  theme(axis.text = element_blank(),legend.position = "bottom",legend.key.width = unit(2.5, "cm"))
+
+```
+
+```{r}
+#| label: estacionalidad mensual METANFETAMINA 
+#| fig-width: 12
+#| fig-height: 14
+#| fig-dpi: 200
+
+ggplot(data = Df_Mapa_Def_Mes |>  filter(DROGA=="METANFETAMINA"))+
+  geom_sf(aes(fill=Total_Kgs))+facet_wrap(~MES, ncol=4)+
+  scale_fill_viridis_c(option = "plasma", trans = "log1p", na.value = "grey90",
+    breaks = c(0, 10, 100, 1000, 10000, 100000, 1000000),
+    labels = scales::label_number(scale_cut = scales::cut_short_scale()))+
+  theme_minimal() +
+  labs(title = "Aseguramiento De METANFETAMINA Temporalidad Mensual (Gris estados sin registro)",
+    fill = "Kgs (Log)")+
+  geom_sf_text(aes(label = abbreviate(NOMGEO, minlength = 3)),size = 1,color = "black")+
+  theme(axis.text = element_blank(),legend.position = "bottom",legend.key.width = unit(2.5, "cm"))
+
+```
+
+```{r}
+#| label: estacionalidad mensual MARIGUANA 
+#| fig-width: 12
+#| fig-height: 14
+#| fig-dpi: 200
+
+ggplot(data = Df_Mapa_Def_Mes |>  filter(DROGA=="MARIGUANA"))+
+  geom_sf(aes(fill=Total_Kgs))+facet_wrap(~MES, ncol=4)+
+  scale_fill_viridis_c(option = "plasma", trans = "log1p", na.value = "grey90",
+    breaks = c(0, 10, 100, 1000, 10000, 100000, 1000000),
+    labels = scales::label_number(scale_cut = scales::cut_short_scale()))+
+  theme_minimal() +
+  labs(title = "Aseguramiento De MARIGUANA Temporalidad Mensual (Gris estados sin registro)",
+    fill = "Kgs (Log)")+
+  geom_sf_text(aes(label = abbreviate(NOMGEO, minlength = 3)),size = 1,color = "black")+
+  theme(axis.text = element_blank(),legend.position = "bottom",legend.key.width = unit(2.5, "cm"))
+
+```
+
+```{r}
+#| label: estacionalidad mensual HEROINA 
+#| fig-width: 12
+#| fig-height: 14
+#| fig-dpi: 200
+
+ggplot(data = Df_Mapa_Def_Mes |>  filter(DROGA=="HEROINA"))+
+  geom_sf(aes(fill=Total_Kgs))+facet_wrap(~MES, ncol=4)+
+  scale_fill_viridis_c(option = "plasma", trans = "log1p", na.value = "grey90",
+    breaks = c(0, 10, 100, 1000, 10000, 100000, 1000000),
+    labels = scales::label_number(scale_cut = scales::cut_short_scale()))+
+  theme_minimal() +
+  labs(title = "Aseguramiento De HEROINA Temporalidad Mensual (Gris estados sin registro)",
+    fill = "Kgs (Log)")+
+  geom_sf_text(aes(label = abbreviate(NOMGEO, minlength = 3)),size = 1,color = "black")+
+  theme(axis.text = element_blank(),legend.position = "bottom",legend.key.width = unit(2.5, "cm"))
+
+```
+
+### Evolución anual de Incautaciones
+
+```{r}
+#| label: Evolución Anual de COCAINA
+#| fig-width: 12
+#| fig-height: 14
+#| fig-dpi: 200
+
+ggplot(data = Df_Mapa_Def_Año |>  filter(DROGA=="COCAINA"))+
+  geom_sf(aes(fill=Total_Kgs))+facet_wrap(~AÑO, ncol=4)+
+  scale_fill_viridis_c(option = "plasma", trans = "log1p", na.value = "grey90",
+    breaks = c(0, 10, 100, 1000, 10000, 100000, 1000000),
+    labels = scales::label_number(scale_cut = scales::cut_short_scale()))+
+  theme_minimal() +
+  labs(title = "Aseguramiento De COCAINA Temporalidad Anual (Gris estados sin registro)",
+    fill = "Kgs (Log)")+
+  geom_sf_text(aes(label = abbreviate(NOMGEO, minlength = 3)),size = 1,color = "black")+
+  theme(axis.text = element_blank(),legend.position = "bottom",legend.key.width = unit(2.5, "cm"))
+
+
+```
+
+```{r}
+#| label: Evolución Anual de METANFETAMINA
+#| fig-width: 12
+#| fig-height: 14
+#| fig-dpi: 200
+
+ggplot(data = Df_Mapa_Def_Año |>  filter(DROGA=="METANFETAMINA"))+
+  geom_sf(aes(fill=Total_Kgs))+facet_wrap(~AÑO, ncol=4)+
+  scale_fill_viridis_c(option = "plasma", trans = "log1p", na.value = "grey90",
+    breaks = c(0, 10, 100, 1000, 10000, 100000, 1000000),
+    labels = scales::label_number(scale_cut = scales::cut_short_scale()))+
+  theme_minimal() +
+  labs(title = "Aseguramiento De METANFETAMINA Temporalidad Anual (Gris estados sin registro)",
+    fill = "Kgs (Log)")+
+  geom_sf_text(aes(label = abbreviate(NOMGEO, minlength = 3)),size = 1,color = "black")+
+  theme(axis.text = element_blank(),legend.position = "bottom",legend.key.width = unit(2.5, "cm"))
+
+
+```
+
+```{r}
+#| label: Evolución Anual de MARIGUANA
+#| fig-width: 12
+#| fig-height: 14
+#| fig-dpi: 200
+
+ggplot(data = Df_Mapa_Def_Año |>  filter(DROGA=="MARIGUANA"))+
+  geom_sf(aes(fill=Total_Kgs))+facet_wrap(~AÑO, ncol=4)+
+  scale_fill_viridis_c(option = "plasma", trans = "log1p", na.value = "grey90",
+    breaks = c(0, 10, 100, 1000, 10000, 100000, 1000000),
+    labels = scales::label_number(scale_cut = scales::cut_short_scale()))+
+  theme_minimal() +
+  labs(title = "Aseguramiento De MARIGUANA Temporalidad Anual (Gris estados sin registro)",
+    fill = "Kgs (Log)")+
+  geom_sf_text(aes(label = abbreviate(NOMGEO, minlength = 3)),size = 1,color = "black")+
+  theme(axis.text = element_blank(),legend.position = "bottom",legend.key.width = unit(2.5, "cm"))
+
+
+```
+
+### Series temporales de evolución de incautaciones de COCAINA NACIONAL y por estado
+
+```{r}
+#| label: Evolucion de incautaciones de cocaina Nacional
+#| fig-width: 10
+#| fig-height: 6
+
+
+Df_Mapa_Def_Año |> st_drop_geometry() |>
+  filter(DROGA == "COCAINA") |> group_by(AÑO) |>
+ summarise(Total_Nacional = sum(Total_Kgs,na.rm = TRUE), .groups = "drop") |>
+ ggplot(aes(x = AÑO, y = Total_Nacional,group = 1)) +
+ geom_line(color = "darkred", linewidth = 1) +
+ geom_point(color = "black", size = 1) +
+ theme_minimal() +
+ labs(
+  title = "Evolución Histórica de Aseguramientos de Cocaína Nacional",
+  x = "Año",y = "Kilos Asegurados") +
+ theme(
+  axis.text.x = element_text(angle = 45, hjust = 1, size = 7),
+  axis.text.y = element_text(size = 7))
+```
+
+```{r}
+#| label: Evolucion de incautaciones de cocaina Por estado
+#| fig-width: 14
+#| fig-height: 10
+#| column: page
+
+Df_Mapa_Def_Año |> st_drop_geometry() |>
+  filter(DROGA == "COCAINA") |> 
+  ggplot(aes(x = AÑO, y = Total_Kgs, group = NOMGEO)) +
+  geom_line(color = "darkred", linewidth = 1) +
+  geom_point(color = "black", size = 1) +
+  facet_wrap(~NOMGEO, ncol = 5, scales = "free_y",labeller = labeller(NOMGEO = function(x) abbreviate(x, minlength = 3))) + 
+  theme_minimal() +
+  labs(
+    title = "Evolución Histórica de Aseguramientos de Cocaína por Estado",
+    x = "Año",y = "Kilos Asegurados") +
+  theme(
+    axis.text.x = element_text(angle = 90, hjust = 1, size = 7),
+    axis.text.y = element_text(size = 7),
+    strip.text = element_text(face = "bold", size = 8))
+```
+
+
+# Agrupación de base de datos a nivel municipal
+
+
+```{r}
+#| label: Espacial Municipal Anual y temporalidad mensual
+
+Df_Mapa_Def_Mun <- Datos_Esp_Mun |> 
+  left_join(
+    Datos_DEFENSA_ETP |> 
+      group_by(CVEGEO, DROGA) |> 
+      summarise(Total_Kgs = sum(KGS., na.rm = TRUE),
+                Total_Lts = sum(LTS., na.rm = TRUE),
+                .groups = "drop") |> 
+      complete(CVEGEO = unique(Datos_Esp_Mun$CVEGEO), 
+               DROGA = unique(Datos_DEFENSA_ETP$DROGA)), 
+    by = "CVEGEO"
+  )
+
+
+Df_Mapa_Def_Mes_Mun <- Datos_Esp_Mun |> 
+  left_join(
+    Datos_DEFENSA_ETP |> 
+      group_by(CVEGEO, DROGA, MES) |> 
+      summarise(Total_Kgs = sum(KGS., na.rm = TRUE),
+                Total_Lts = sum(LTS., na.rm = TRUE),
+                .groups = "drop") |> 
+      complete(CVEGEO = unique(Datos_Esp_Mun$CVEGEO),
+               DROGA = unique(Datos_DEFENSA_ETP$DROGA),
+               MES = unique(Datos_DEFENSA_ETP$MES)), 
+    by = "CVEGEO"
+  ) |> 
+  mutate(MES = factor(MES, levels = c("ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO",
+                                      "JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE")))
+
+
+Df_Mapa_Def_Año_Mun <- Datos_Esp_Mun |> 
+  left_join(
+    Datos_DEFENSA_ETP |> 
+      group_by(CVEGEO, DROGA, AÑO) |> 
+      summarise(Total_Kgs = sum(KGS., na.rm = TRUE),
+                Total_Lts = sum(LTS., na.rm = TRUE),
+                .groups = "drop") |> 
+      complete(CVEGEO = unique(Datos_Esp_Mun$CVEGEO),
+               DROGA = unique(Datos_DEFENSA_ETP$DROGA),
+               AÑO = unique(Datos_DEFENSA_ETP$AÑO)), 
+    by = "CVEGEO"
+  )
+
+```
+## Graficas Espaciales y temporales Municipales
+```{r}
+#| label: grafica Total de Kgs Incautados por municipio historico
+#| fig-width: 14
+#| fig-height: 16
+#| fig-dpi: 200
+
+ggplot(data = Df_Mapa_Def_Mun)+
+  # Se usa color = "transparent" (o linewidth muy bajo) para evitar que los bordes municipales saturen el mapa
+  geom_sf(aes(fill=Total_Kgs), color = "transparent")+facet_wrap(~DROGA, ncol=3)+
+  scale_fill_viridis_c(option = "plasma", trans = "log1p", na.value = "grey90",
+    breaks = c(0, 10, 100, 1000, 10000, 100000, 1000000),
+    labels = scales::label_number(scale_cut = scales::cut_short_scale()))+
+  theme_minimal() +
+  labs(title = "Aseguramiento Municipal por Tipo de Droga (Gris municipios sin registro)",
+    fill = "Kgs (Log)")+
+  # Se omite geom_sf_text() porque etiquetar más de 2400 municipios saturaría el gráfico
+  theme(axis.text = element_blank(),legend.position = "bottom",legend.key.width = unit(2.5, "cm"))
+```
+
+```{r}
+#| label: grafica Total de Lts Incautados por municipio historico
+#| fig-width: 14
+#| fig-height: 16
+#| fig-dpi: 200
+
+ggplot(data = Df_Mapa_Def_Mun)+
+  geom_sf(aes(fill=Total_Lts, text = paste("Municipio:", MUNICIPIO, "<br>Lts:", Total_Lts)), color = "transparent")+facet_wrap(~DROGA, ncol=3)+
+  scale_fill_viridis_c(option = "plasma", trans = "log1p", na.value = "grey90",
+    breaks = c(0, 10, 100, 1000, 10000, 100000, 1000000),
+    labels = scales::label_number(scale_cut = scales::cut_short_scale()))+
+  theme_minimal() +
+  labs(title = "Aseguramiento Municipal por Tipo de Droga (Gris municipios sin registro)",
+    fill = "Lts (Log)")+
+  theme(axis.text = element_blank(),legend.position = "bottom",legend.key.width = unit(2.5, "cm"))
+```
+### Estacionalidad de Aseguramientos Municipal
+
+```{r}
+#| label: estacionalidad mensual COCAINA municipal
+#| fig-width: 14
+#| fig-height: 16
+#| fig-dpi: 200
+
+ggplot(data = Df_Mapa_Def_Mes_Mun |> filter(DROGA=="COCAINA"))+
+  geom_sf(aes(fill=Total_Kgs), color = "transparent")+facet_wrap(~MES, ncol=4)+
+  scale_fill_viridis_c(option = "plasma", trans = "log1p", na.value = "grey90",
+    breaks = c(0, 10, 100, 1000, 10000, 100000, 1000000),
+    labels = scales::label_number(scale_cut = scales::cut_short_scale()))+
+  theme_minimal() +
+  labs(title = "Aseguramiento de COCAINA Temporalidad Mensual (Municipal)",
+    fill = "Kgs (Log)")+
+  theme(axis.text = element_blank(),legend.position = "bottom",legend.key.width = unit(2.5, "cm"))
+```
+
+```{r}
+#| label: estacionalidad mensual METANFETAMINA municipal
+#| fig-width: 14
+#| fig-height: 16
+#| fig-dpi: 200
+
+ggplot(data = Df_Mapa_Def_Mes_Mun |> filter(DROGA=="METANFETAMINA"))+
+  geom_sf(aes(fill=Total_Kgs), color = "transparent")+facet_wrap(~MES, ncol=4)+
+  scale_fill_viridis_c(option = "plasma", trans = "log1p", na.value = "grey90",
+    breaks = c(0, 10, 100, 1000, 10000, 100000, 1000000),
+    labels = scales::label_number(scale_cut = scales::cut_short_scale()))+
+  theme_minimal() +
+  labs(title = "Aseguramiento de METANFETAMINA Temporalidad Mensual (Municipal)",
+    fill = "Kgs (Log)")+
+  theme(axis.text = element_blank(),legend.position = "bottom",legend.key.width = unit(2.5, "cm"))
+```
+
+```{r}
+#| label: estacionalidad mensual MARIGUANA municipal
+#| fig-width: 14
+#| fig-height: 16
+#| fig-dpi: 200
+
+ggplot(data = Df_Mapa_Def_Mes_Mun |> filter(DROGA=="MARIGUANA"))+
+  geom_sf(aes(fill=Total_Kgs), color = "transparent")+facet_wrap(~MES, ncol=4)+
+  scale_fill_viridis_c(option = "plasma", trans = "log1p", na.value = "grey90",
+    breaks = c(0, 10, 100, 1000, 10000, 100000, 1000000),
+    labels = scales::label_number(scale_cut = scales::cut_short_scale()))+
+  theme_minimal() +
+  labs(title = "Aseguramiento de MARIGUANA Temporalidad Mensual (Municipal)",
+    fill = "Kgs (Log)")+
+  theme(axis.text = element_blank(),legend.position = "bottom",legend.key.width = unit(2.5, "cm"))
+```
+
+```{r}
+#| label: estacionalidad mensual HEROINA municipal
+#| fig-width: 14
+#| fig-height: 16
+#| fig-dpi: 200
+
+ggplot(data = Df_Mapa_Def_Mes_Mun |> filter(DROGA=="HEROINA"))+
+  geom_sf(aes(fill=Total_Kgs), color = "transparent")+facet_wrap(~MES, ncol=4)+
+  scale_fill_viridis_c(option = "plasma", trans = "log1p", na.value = "grey90",
+    breaks = c(0, 10, 100, 1000, 10000, 100000, 1000000),
+    labels = scales::label_number(scale_cut = scales::cut_short_scale()))+
+  theme_minimal() +
+  labs(title = "Aseguramiento de HEROINA Temporalidad Mensual (Municipal)",
+    fill = "Kgs (Log)")+
+  theme(axis.text = element_blank(),legend.position = "bottom",legend.key.width = unit(2.5, "cm"))
+```
+### Evolución anual de Incautaciones Municipal
+```{r}
+#| label: Evolución Anual de COCAINA municipal
+#| fig-width: 16
+#| fig-height: 18
+#| fig-dpi: 200
+
+ggplot(data = Df_Mapa_Def_Año_Mun |> filter(DROGA=="COCAINA"))+
+  geom_sf(aes(fill=Total_Kgs), color = "transparent")+facet_wrap(~AÑO, ncol=4)+
+  scale_fill_viridis_c(option = "plasma", trans = "log1p", na.value = "grey90",
+    breaks = c(0, 10, 100, 1000, 10000, 100000, 1000000),
+    labels = scales::label_number(scale_cut = scales::cut_short_scale()))+
+  theme_minimal() +
+  labs(title = "Aseguramiento de COCAINA Temporalidad Anual (Municipal)",
+    fill = "Kgs (Log)")+
+  theme(axis.text = element_blank(),legend.position = "bottom",legend.key.width = unit(2.5, "cm"))
+```
+
+```{r}
+#| label: Evolución Anual de METANFETAMINA municipal
+#| fig-width: 16
+#| fig-height: 18
+#| fig-dpi: 200
+
+ggplot(data = Df_Mapa_Def_Año_Mun |> filter(DROGA=="METANFETAMINA"))+
+  geom_sf(aes(fill=Total_Kgs), color = "transparent")+facet_wrap(~AÑO, ncol=4)+
+  scale_fill_viridis_c(option = "plasma", trans = "log1p", na.value = "grey90",
+    breaks = c(0, 10, 100, 1000, 10000, 100000, 1000000),
+    labels = scales::label_number(scale_cut = scales::cut_short_scale()))+
+  theme_minimal() +
+  labs(title = "Aseguramiento de METANFETAMINA Temporalidad Anual (Municipal)",
+    fill = "Kgs (Log)")+
+  theme(axis.text = element_blank(),legend.position = "bottom",legend.key.width = unit(2.5, "cm"))
+```
+
+```{r}
+#| label: Evolución Anual de MARIGUANA municipal
+#| fig-width: 16
+#| fig-height: 18
+#| fig-dpi: 200
+
+ggplot(data = Df_Mapa_Def_Año_Mun |> filter(DROGA=="MARIGUANA"))+
+  geom_sf(aes(fill=Total_Kgs), color = "transparent")+facet_wrap(~AÑO, ncol=4)+
+  scale_fill_viridis_c(option = "plasma", trans = "log1p", na.value = "grey90",
+    breaks = c(0, 10, 100, 1000, 10000, 100000, 1000000),
+    labels = scales::label_number(scale_cut = scales::cut_short_scale()))+
+  theme_minimal() +
+  labs(title = "Aseguramiento de MARIGUANA Temporalidad Anual (Municipal)",
+    fill = "Kgs (Log)")+
+  theme(axis.text = element_blank(),legend.position = "bottom",legend.key.width = unit(2.5, "cm"))
+```
+

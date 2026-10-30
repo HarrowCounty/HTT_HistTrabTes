@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>6&nbsp; Homologación Datos Electorales – HTT_HistorialTrabajoTesis</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../notebooks/04_Analisis_Esp_Temp_Est_Mun.html" rel="next">
+<link href="../notebooks/02_Datos_Municipales.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-7ac15b8a79fe5cd89217131b9707f42c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../notebooks/03_Datos_Elecciones_Estatales_Municipales.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Homologación Datos Electorales</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">HTT_HistorialTrabajoTesis</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Primeros pasos</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introducción</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../summary.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notebooks/01_Datos_Estatales.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Datos Estatales</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notebooks/02_Datos_Municipales.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Homologación de Datos Municipales</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notebooks/03_Datos_Elecciones_Estatales_Municipales.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Homologación Datos Electorales</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notebooks/04_Analisis_Esp_Temp_Est_Mun.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Análisis Espacial, Temporal Estatal y Municipal</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../notebooks/05_Analisis_Temp_Politico_Est_Mun.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Análisis Político Muncipal y Estatal de los registros de incautaciones</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#agregar-identificador-municipal-a-mi-base-datos_defensa_homologados.csv" id="toc-agregar-identificador-municipal-a-mi-base-datos_defensa_homologados.csv" class="nav-link active" data-scroll-target="#agregar-identificador-municipal-a-mi-base-datos_defensa_homologados.csv"><span class="header-section-number">7</span> Agregar identificador municipal a mi base Datos_DEFENSA_Homologados.csv</a></li>
+  <li><a href="#cargar-base-de-datos-electorales" id="toc-cargar-base-de-datos-electorales" class="nav-link" data-scroll-target="#cargar-base-de-datos-electorales"><span class="header-section-number">8</span> Cargar base de datos Electorales</a></li>
+  <li><a href="#emparejamiento-temporal-de-incautaciones-y-periodos-de-gobierno-rolling-join" id="toc-emparejamiento-temporal-de-incautaciones-y-periodos-de-gobierno-rolling-join" class="nav-link" data-scroll-target="#emparejamiento-temporal-de-incautaciones-y-periodos-de-gobierno-rolling-join"><span class="header-section-number">9</span> Emparejamiento temporal de incautaciones y periodos de gobierno (Rolling Join)</a>
+  <ul class="collapse">
+  <li><a href="#municipios-sin-partido-electo-tras-el-cruce" id="toc-municipios-sin-partido-electo-tras-el-cruce" class="nav-link" data-scroll-target="#municipios-sin-partido-electo-tras-el-cruce"><span class="header-section-number">9.1</span> Municipios sin partido electo tras el cruce</a></li>
+  </ul></li>
+  <li><a href="#integración-del-partido-presidencial-nivel-federal" id="toc-integración-del-partido-presidencial-nivel-federal" class="nav-link" data-scroll-target="#integración-del-partido-presidencial-nivel-federal"><span class="header-section-number">10</span> Integración del Partido Presidencial (Nivel Federal)</a></li>
+  <li><a href="#guardar-la-base-de-datos" id="toc-guardar-la-base-de-datos" class="nav-link" data-scroll-target="#guardar-la-base-de-datos"><span class="header-section-number">11</span> Guardar la base de datos</a></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
+<!-- main -->
+<main class="content column-page-right" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Homologación Datos Electorales</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta column-page-right">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scales)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plotly)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringi)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>En general, este capítulo es para homologar y cruzar mi processed/Datos_DEFESA_Homologados.csv y los datos extraidos de:</p>
+<p>MUNICIPALES: https://github.com/emagar/elecRetrns/blob/master/data/aymu1970-on.coalAgg.csv ESTATALES: https://github.com/emagar/elecRetrns/blob/master/data/goed1961-on.csv</p>
+<p>que guardaré en data/raw/Datos_Electorales</p>
+<p>PERO ANTES, es importante notar que los estados y municipios también pueden tener error de registro. Pero las bases de emagar tiene clave estatal y códigos de identificador municipal de INEGI. Por lo tanto, lo primero que haré es darle estos atributos a mi base de datos homologada.</p>
+<section id="agregar-identificador-municipal-a-mi-base-datos_defensa_homologados.csv" class="level1" data-number="7">
+<h1 data-number="7"><span class="header-section-number">7</span> Agregar identificador municipal a mi base Datos_DEFENSA_Homologados.csv</h1>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#|label: Base de datos Defensa Homologados y Catalogo Municipal INEGI </span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>ruta_DB_DEFENSA_Hom <span class="ot">&lt;-</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>,<span class="st">"processed"</span>,<span class="st">"Datos_DEFENSA_Homologados.csv"</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>Datos_DEFENSA_Hom <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(ruta_DB_DEFENSA_Hom, <span class="at">guess_max =</span> <span class="dv">50000</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 47119 Columns: 9
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (4): MES, ESTADO, MUNICIPIO, DROGA
+dbl (5): AÑO, AMPOLLETA, KGS., LTS., UNIDADES
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>ruta_datos_Municipales <span class="ot">&lt;-</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>,<span class="st">"processed"</span>,<span class="st">"Datos_EspacialesMunicipales.shp"</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>Datos_Esp_Mun <span class="ot">&lt;-</span> <span class="fu">st_read</span>(ruta_datos_Municipales)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Reading layer `Datos_EspacialesMunicipales' from data source 
+  `C:\Users\fismo\OneDrive\Documents\Tesis\HTT_HistTrabTes\data\processed\Datos_EspacialesMunicipales.shp' 
+  using driver `ESRI Shapefile'
+Simple feature collection with 2478 features and 5 fields
+Geometry type: MULTIPOLYGON
+Dimension:     XY
+Bounding box:  xmin: 911292 ymin: 319149.1 xmax: 4083063 ymax: 2349615
+Projected CRS: MEXICO_ITRF_2008_LCC</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(Datos_DEFENSA_Hom)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 9
+    AÑO MES   ESTADO          MUNICIPIO DROGA   AMPOLLETA    KGS.  LTS. UNIDADES
+  &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;           &lt;chr&gt;     &lt;chr&gt;       &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;
+1  2005 ENERO BAJA CALIFORNIA ENSENADA  HEROINA        NA 2.07e+0    NA       NA
+2  2005 ENERO BAJA CALIFORNIA ENSENADA  MARIGU…        NA 1.06e+3    NA       NA
+3  2005 ENERO BAJA CALIFORNIA MEXICALI  MARIGU…        NA 5.49e+2    NA       NA
+4  2005 ENERO BAJA CALIFORNIA TECATE    MARIGU…        NA 1.57e+3    NA       NA
+5  2005 ENERO BAJA CALIFORNIA TIJUANA   COCAINA        NA 9.8 e-1    NA       NA
+6  2005 ENERO BAJA CALIFORNIA TIJUANA   HEROINA        NA 9.55e-1    NA       NA</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(Datos_Esp_Mun)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Simple feature collection with 6 features and 5 fields
+Geometry type: MULTIPOLYGON
+Dimension:     XY
+Bounding box:  xmin: 2428810 ymin: 1067540 xmax: 2493363 ymax: 1150412
+Projected CRS: MEXICO_ITRF_2008_LCC
+  CVEGEO CVE_ENT CVE_MUN                 MUNICIPIO         ESTADO
+1  01001      01     001            AGUASCALIENTES AGUASCALIENTES
+2  01008      01     008        SAN JOSE DE GRACIA AGUASCALIENTES
+3  01011      01     011 SAN FRANCISCO DE LOS ROMO AGUASCALIENTES
+4  01009      01     009                  TEPEZALA AGUASCALIENTES
+5  01007      01     007           RINCON DE ROMOS AGUASCALIENTES
+6  01006      01     006       PABELLON DE ARTEAGA AGUASCALIENTES
+                        geometry
+1 MULTIPOLYGON (((2488980 111...
+2 MULTIPOLYGON (((2453327 114...
+3 MULTIPOLYGON (((2483638 112...
+4 MULTIPOLYGON (((2481826 114...
+5 MULTIPOLYGON (((2476760 115...
+6 MULTIPOLYGON (((2473997 112...</code></pre>
+</div>
+</div>
+<p>Antes de agregar las propiedades de CVE_ENT y CVE_MUN vamos a corroborar que todos los pares de ESTADO|MUNICIPIO donde hay registro de incautación estén en la base geoespacial.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>pares_defensa <span class="ot">&lt;-</span> Datos_DEFENSA_Hom <span class="sc">%&gt;%</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(ESTADO, MUNICIPIO) <span class="sc">%&gt;%</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>()</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>pares_espaciales <span class="ot">&lt;-</span> Datos_Esp_Mun <span class="sc">%&gt;%</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_drop_geometry</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(ESTADO, MUNICIPIO) <span class="sc">%&gt;%</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>()</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="fu">setdiff</span>(<span class="fu">select</span>(Datos_DEFENSA_Hom, ESTADO, MUNICIPIO),<span class="fu">select</span>(<span class="fu">st_drop_geometry</span>(Datos_Esp_Mun), ESTADO, MUNICIPIO))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 0 × 2
+# ℹ 2 variables: ESTADO &lt;chr&gt;, MUNICIPIO &lt;chr&gt;</code></pre>
+</div>
+</div>
+<p>Todo bien.</p>
+<p>Entonces ahora sí vamos a hederar las claves de entidad y municipio. Por si las moscas voy a guardarla la base cruzada en un nuevo archivo</p>
+<p>Pasó algo que vale la pena reportar, al querrer hacer un left goin de la siguiente manera:</p>
+<p>“Datos_DEFENSA_Hom_CV &lt;- Datos_DEFENSA_Hom %&gt;% left_join( Datos_Esp_Mun %&gt;% st_drop_geometry() %&gt;% select(ESTADO, MUNICIPIO, CVE_ENT, CVE_MUN, CVEGEO) %&gt;% distinct(), by = c(”ESTADO”, “MUNICIPIO”) )”</p>
+<p>El numero de registros pasó de 47119 a 47159. la razón de este ahumento de registro fué que la base de datos del INEGI tiene 4 registros con el mismo nombre de estado y con mismo nombre de municipio pero con diferente CVEGEO:</p>
+<p>1 OAXACA SAN JUAN MIXTEPEC 20208 2 OAXACA SAN JUAN MIXTEPEC 20209 3 OAXACA SAN PEDRO MIXTEPEC 20318 4 OAXACA SAN PEDRO MIXTEPEC 20319</p>
+<p>voy a ver si hay registro de incautacion en este estado:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>Datos_DEFENSA_Hom <span class="sc">|&gt;</span> <span class="fu">filter</span>(ESTADO<span class="sc">==</span><span class="st">"OAXACA"</span>,MUNICIPIO <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"SAN JUAN MIXTEPE"</span>,<span class="st">"SAN PEDRO MIXTEPEC"</span>)) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 40 × 9
+     AÑO MES       ESTADO MUNICIPIO       DROGA AMPOLLETA    KGS.  LTS. UNIDADES
+   &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt;           &lt;chr&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;
+ 1  2005 JULIO     OAXACA SAN PEDRO MIXT… MARI…        NA 1.6 e+0    NA       NA
+ 2  2008 FEBRERO   OAXACA SAN PEDRO MIXT… MARI…        NA 1.13e+3    NA       NA
+ 3  2008 ABRIL     OAXACA SAN PEDRO MIXT… MARI…        NA 3.53e+3    NA       NA
+ 4  2008 MAYO      OAXACA SAN PEDRO MIXT… COCA…        NA 2   e-2    NA       NA
+ 5  2008 MAYO      OAXACA SAN PEDRO MIXT… MARI…        NA 7.68e+2    NA       NA
+ 6  2008 JUNIO     OAXACA SAN PEDRO MIXT… MARI…        NA 2.90e+2    NA       NA
+ 7  2008 NOVIEMBRE OAXACA SAN PEDRO MIXT… MARI…        NA 8.43e+2    NA       NA
+ 8  2008 DICIEMBRE OAXACA SAN PEDRO MIXT… COCA…        NA 5   e-3    NA       NA
+ 9  2008 DICIEMBRE OAXACA SAN PEDRO MIXT… MARI…        NA 1.01e+3    NA       NA
+10  2009 ENERO     OAXACA SAN PEDRO MIXT… MARI…        NA 1.78e+2    NA       NA
+# ℹ 30 more rows</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>Datos_DEFENSA_Hom <span class="sc">|&gt;</span> <span class="fu">filter</span>(ESTADO<span class="sc">==</span><span class="st">"OAXACA"</span>,MUNICIPIO <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"SAN JUAN MIXTEPE"</span>,<span class="st">"SAN PEDRO MIXTEPEC"</span>))  <span class="sc">|&gt;</span> <span class="fu">nrow</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 40</code></pre>
+</div>
+</div>
+<p>Ya valió madre jaja, a que CVGEO se le atribuye la incautación? No hay manera de saberlo.</p>
+<p>Que se va a hacer? Yo creo que de momento omitir esos dos registros, aunque representan incautaciones de Mariguana bastante fuertes.</p>
+<p>Los omitiré deberían de quedar 40 registros menos es decir 47119-40=47079</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>Datos_DEFENSA_Hom_CV <span class="ot">&lt;-</span> Datos_DEFENSA_Hom <span class="sc">%&gt;%</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Exclusión temporal de municipios homónimos por ambigüedad de CVEGEO</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>(ESTADO <span class="sc">==</span> <span class="st">"OAXACA"</span> <span class="sc">&amp;</span> MUNICIPIO <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"SAN JUAN MIXTEPEC"</span>, <span class="st">"SAN PEDRO MIXTEPEC"</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    Datos_Esp_Mun <span class="sc">%&gt;%</span> </span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">st_drop_geometry</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>      <span class="fu">select</span>(ESTADO, MUNICIPIO, CVE_ENT, CVE_MUN, CVEGEO) <span class="sc">%&gt;%</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">distinct</span>(), </span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"ESTADO"</span>, <span class="st">"MUNICIPIO"</span>)</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificamos que los registros se mantengan consistentes</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(Datos_DEFENSA_Hom_CV)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 47079</code></pre>
+</div>
+</div>
+</section>
+<section id="cargar-base-de-datos-electorales" class="level1" data-number="8">
+<h1 data-number="8"><span class="header-section-number">8</span> Cargar base de datos Electorales</h1>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co">#|label: Base de datos Defensa Homologados y Catalogo Municipal INEGI </span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>ruta_Electoral_Est <span class="ot">&lt;-</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>,<span class="st">"raw"</span>,<span class="st">"Datos_Electorales"</span>,<span class="st">"goed1961-on.csv"</span>)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>Datos_Ele_Est <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(ruta_Electoral_Est)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 363 Columns: 60
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (26): edo, mo, win, l01, l02, l03, l04, l05, l06, l07, l08, l09, l10, l1...
+dbl (34): ord, edon, yr, dy, ncand, v01, v02, v03, v04, v05, v06, v07, v08, ...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>ruta_Electoral_Mun <span class="ot">&lt;-</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>,<span class="st">"raw"</span>,<span class="st">"Datos_Electorales"</span>,<span class="st">"aymu1970-on.coalAgg.csv"</span>)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>Datos_Ele_Mun <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(ruta_Electoral_Mun)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 36725 Columns: 66
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (28): emm, mun, status, win, l01, l02, l03, l04, l05, l06, l07, l08, l09...
+dbl (38): yr, inegi, ife, edon, date, ncand, ncoal, mg, v01, v02, v03, v04, ...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(Datos_Ele_Est,<span class="at">n=</span><span class="dv">15</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 15 × 60
+     ord  edon edo      yr mo       dy win   ncand    v01 l01          v02 l02  
+   &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;
+ 1     1     1 ags    1962 ago       5 pri       2  49365 pri         4400 pan  
+ 2     2     1 ags    1968 ago       4 pri       1  81481 pri           NA &lt;NA&gt; 
+ 3     3     1 ags    1974 ago       4 pri       2  63834 pri        12705 pan  
+ 4     4     1 ags    1980 ago       0 pri       7  80747 pri         8116 pan  
+ 5     5     1 ags    1986 oct       0 pri       8 136051 pri        34515 pan  
+ 6     6     1 ags    1992 ago       2 pri       6 141175 pri        37324 pan  
+ 7     7     1 ags    1998 ago       2 pan       4 130592 pri       182362 pan  
+ 8     8     1 ags    2004 ago       1 pan       3 122108 pri-pvem… 190644 pan  
+ 9     9     1 ags    2010 jul       4 pri       4 172028 pri       182910 pan  
+10    10     1 ags    2016 jun       5 pan       6 203417 pan       189852 pri-…
+11    11     1 ags    2022 jun       5 pan       5 200017 pan        31698 pri  
+12    12     2 bc     1965 ago       1 pri       2 105581 pri        37365 pan  
+13    13     2 bc     1971 ago       1 pri       4 148495 pri        82291 pan  
+14    14     2 bc     1977 jul       0 pri       4 181760 pri        89574 pan  
+15    15     2 bc     1983 sep       0 pri       7 264646 pri       121818 pan  
+# ℹ 48 more variables: v03 &lt;dbl&gt;, l03 &lt;chr&gt;, v04 &lt;dbl&gt;, l04 &lt;chr&gt;, v05 &lt;dbl&gt;,
+#   l05 &lt;chr&gt;, v06 &lt;dbl&gt;, l06 &lt;chr&gt;, v07 &lt;dbl&gt;, l07 &lt;chr&gt;, v08 &lt;dbl&gt;,
+#   l08 &lt;chr&gt;, v09 &lt;dbl&gt;, l09 &lt;chr&gt;, v10 &lt;dbl&gt;, l10 &lt;chr&gt;, v11 &lt;dbl&gt;,
+#   l11 &lt;chr&gt;, v12 &lt;dbl&gt;, l12 &lt;chr&gt;, v13 &lt;dbl&gt;, l13 &lt;chr&gt;, v14 &lt;dbl&gt;,
+#   l14 &lt;chr&gt;, v15 &lt;dbl&gt;, l15 &lt;chr&gt;, v16 &lt;dbl&gt;, l16 &lt;chr&gt;, v17 &lt;dbl&gt;,
+#   l17 &lt;chr&gt;, efec &lt;dbl&gt;, nr &lt;dbl&gt;, nulos &lt;dbl&gt;, vtot &lt;dbl&gt;, lisnom &lt;dbl&gt;,
+#   fuente &lt;chr&gt;, nota &lt;chr&gt;, imputacion &lt;chr&gt;, distpan &lt;chr&gt;, distpri &lt;dbl&gt;, …</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(Datos_Ele_Mun)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 66
+  emm           yr inegi   ife mun    edon   date status ncand ncoal win      mg
+  &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt; &lt;dbl&gt;
+1 ags-03.001  1977  1001  1001 AGUA…     1 1.98e7 ok         1     0 pri   1    
+2 ags-03.002  1977  1002  1002 ASIE…     1 1.98e7 ok         1     0 pri   1    
+3 ags-03.003  1977  1003  1003 CALV…     1 1.98e7 ok         1     0 pri   1    
+4 ags-03.004  1977  1004  1004 COSIO     1 1.98e7 ok         1     0 pri   1    
+5 ags-03.005  1977  1005  1005 JESU…     1 1.98e7 ok         2     0 pri   0.812
+6 ags-03.006  1977  1006  1006 PABE…     1 1.98e7 ok         1     0 pri   1    
+# ℹ 54 more variables: v01 &lt;dbl&gt;, l01 &lt;chr&gt;, v02 &lt;dbl&gt;, l02 &lt;chr&gt;, v03 &lt;dbl&gt;,
+#   l03 &lt;chr&gt;, v04 &lt;dbl&gt;, l04 &lt;chr&gt;, v05 &lt;dbl&gt;, l05 &lt;chr&gt;, v06 &lt;dbl&gt;,
+#   l06 &lt;chr&gt;, v07 &lt;dbl&gt;, l07 &lt;chr&gt;, v08 &lt;dbl&gt;, l08 &lt;chr&gt;, v09 &lt;dbl&gt;,
+#   l09 &lt;chr&gt;, v10 &lt;dbl&gt;, l10 &lt;chr&gt;, v11 &lt;dbl&gt;, l11 &lt;chr&gt;, v12 &lt;dbl&gt;,
+#   l12 &lt;chr&gt;, v13 &lt;dbl&gt;, l13 &lt;chr&gt;, v14 &lt;dbl&gt;, l14 &lt;chr&gt;, v15 &lt;dbl&gt;,
+#   l15 &lt;chr&gt;, v16 &lt;dbl&gt;, l16 &lt;chr&gt;, v17 &lt;dbl&gt;, l17 &lt;chr&gt;, v18 &lt;dbl&gt;,
+#   l18 &lt;chr&gt;, v19 &lt;dbl&gt;, l19 &lt;chr&gt;, v20 &lt;dbl&gt;, l20 &lt;chr&gt;, v21 &lt;dbl&gt;, …</code></pre>
+</div>
+</div>
+<p>La base de datos de Elecciones estatales solo me importa cruzarla por el campo inegi que para que sea consistente con el CVE_MUN hay que agregarle un 0 a todas las claves que empiecen por 1,2,3,4,5,6,7,8,9 ya que en CVE_MUN el formato es 01,02,…,09</p>
+<p>Hay que cruzar los campos por inegi|yr . Seguramente habrá problemas de homologación de nombre municipal. Pero si cruzarlo solo por el campo inegi es suficiente así lo haré.</p>
+<p>solo me interesa que el cruce recupere la info del campo de win con el nombre de PartidoElectoMun</p>
+<p>La base de datos de elecciones estatales se debe cruzar por edon|yr.</p>
+<p>Para edon también hay que agregar un 0 a los numeros de 1-9</p>
+<p>Me interesa recuperar la info del campo win con el nombre de PartidoElectoMun</p>
+<p>De esta menera para cada estado tendré la información de que partido politico gobernaba en el estado y en el municipio para cada uno de los registros de incautación</p>
+<p>Depues hay que ver si se perdieron registros</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Base Municipal</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>Datos_Ele_Mun_Clean <span class="ot">&lt;-</span> Datos_Ele_Mun <span class="sc">%&gt;%</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(yr <span class="sc">&gt;=</span> <span class="dv">1995</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">CVEGEO =</span> <span class="fu">str_pad</span>(<span class="fu">as.character</span>(inegi), <span class="at">width =</span> <span class="dv">5</span>, <span class="at">side =</span> <span class="st">"left"</span>, <span class="at">pad =</span> <span class="st">"0"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Quitar elecciones anuladas (busca la palabra dentro del status)</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">str_detect</span>(status, <span class="st">"cancelled"</span>) <span class="sc">|</span> <span class="fu">is.na</span>(status)) <span class="sc">%&gt;%</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">win =</span> <span class="fu">case_when</span>(</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_detect</span>(status, <span class="st">"appointed"</span>) <span class="sc">~</span> <span class="st">"ConcejoMunicipal"</span>,</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_detect</span>(status, <span class="st">"missing"</span>)   <span class="sc">~</span> <span class="cn">NA_character_</span>,</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>    win <span class="sc">==</span> <span class="st">"0"</span>                      <span class="sc">~</span> <span class="cn">NA_character_</span>,   <span class="co"># candado final</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>    <span class="cn">TRUE</span>                            <span class="sc">~</span> win</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">%&gt;%</span></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(CVEGEO, yr, <span class="fu">desc</span>(date)) <span class="sc">%&gt;%</span></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(CVEGEO, yr, <span class="at">.keep_all =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(CVEGEO, yr, <span class="at">PartidoElectoMun =</span> win)</span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a><span class="co">#Base Estatal</span></span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>Datos_Ele_Est_Clean <span class="ot">&lt;-</span> Datos_Ele_Est <span class="sc">%&gt;%</span></span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(yr <span class="sc">&gt;=</span> <span class="dv">1995</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">CVE_ENT =</span> <span class="fu">str_pad</span>(<span class="fu">as.character</span>(edon), <span class="at">width =</span> <span class="dv">2</span>, <span class="at">side =</span> <span class="st">"left"</span>, <span class="at">pad =</span> <span class="st">"0"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(CVE_ENT, yr, <span class="at">.keep_all =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(CVE_ENT, yr, <span class="at">PartidoElectoEst =</span> win)</span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a><span class="co">#Verificación: los tres deben dar 0 </span></span>
+<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">duplicated</span>(Datos_Ele_Mun_Clean[, <span class="fu">c</span>(<span class="st">"CVEGEO"</span>, <span class="st">"yr"</span>)]))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">duplicated</span>(Datos_Ele_Est_Clean[, <span class="fu">c</span>(<span class="st">"CVE_ENT"</span>, <span class="st">"yr"</span>)]))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(Datos_Ele_Mun_Clean<span class="sc">$</span>PartidoElectoMun <span class="sc">==</span> <span class="st">"0"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+</div>
+</section>
+<section id="emparejamiento-temporal-de-incautaciones-y-periodos-de-gobierno-rolling-join" class="level1" data-number="9">
+<h1 data-number="9"><span class="header-section-number">9</span> Emparejamiento temporal de incautaciones y periodos de gobierno (Rolling Join)</h1>
+<p>Al intentar cruzar la base de datos de incautaciones (eventos registrados anualmente) con las bases electorales (eventos que ocurren cada 3 o 6 años), surge una incompatibilidad temporal.</p>
+<p>Un cruce exacto tradicional (<code>left_join</code> por año) generaría valores perdidos (<code>NA</code>) en la variable del partido político para todas las incautaciones ocurridas en años sin elecciones.</p>
+<p>Para resolver esto, se implementa un <strong>cruce por proximidad (rolling join)</strong> utilizando la función <code>closest()</code> del paquete <code>dplyr</code>.</p>
+<p>Esta técnica permite que cada registro de incautación busque hacia atrás en el tiempo y herede el partido político ganador de la elección más reciente (<code>yr &lt; AÑO</code>). De esta forma, se asume que el partido electo en el año <span class="math inline">\(t\)</span> gobierna ininterrumpidamente hasta la siguiente elección.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Cruce Municipal Dinámico</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>Datos_DEFENSA_Hom_CV <span class="ot">&lt;-</span> Datos_DEFENSA_Hom_CV <span class="sc">%&gt;%</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    Datos_Ele_Mun_Clean, </span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Buscar el mismo CVEGEO y la elección más cercana hacia atrás en el tiempo</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">join_by</span>(CVEGEO, <span class="fu">closest</span>(AÑO <span class="sc">&gt;</span> yr))) <span class="sc">%&gt;%</span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">`</span><span class="at">AnoElePresMunicipal</span><span class="st">`</span> <span class="ot">=</span> yr) <span class="co"># Se elimina el año electoral para evitar confusión con el AÑO de incautación</span></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Cruce Estatal Dinámico</span></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>Datos_DEFENSA_Hom_CV <span class="ot">&lt;-</span> Datos_DEFENSA_Hom_CV <span class="sc">%&gt;%</span></span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>    Datos_Ele_Est_Clean, </span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">join_by</span>(CVE_ENT, <span class="fu">closest</span>(AÑO <span class="sc">&gt;</span> yr))</span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">`</span><span class="at">AnoElePresEstatal</span><span class="st">`</span> <span class="ot">=</span> yr)</span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificación de integridad</span></span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(Datos_DEFENSA_Hom_CV))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                AÑO                 MES              ESTADO           MUNICIPIO 
+                  0                   0                   0                   0 
+              DROGA           AMPOLLETA                KGS.                LTS. 
+                  0               47050                 439               46708 
+           UNIDADES             CVE_ENT             CVE_MUN              CVEGEO 
+              46600                   0                   0                   0 
+AnoElePresMunicipal    PartidoElectoMun   AnoElePresEstatal    PartidoElectoEst 
+                400                 400                   0                2400 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(Datos_DEFENSA_Hom_CV)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 47079</code></pre>
+</div>
+</div>
+<p>Al revisar la integridad del cruce se detectaron 2,400 valores perdidos (NA) exclusivamente en PartidoElectoEst. Corresponden a incautaciones de 2025 en los 9 estados que celebraron elecciones para gobernador en 2024 (Chiapas, Ciudad de México, Guanajuato, Jalisco, Morelos, Puebla, Tabasco, Veracruz y Yucatán). Como cada incautación hereda la elección inmediatamente anterior a su año, las de 2024 conservan al gobernador saliente y las de 2025 heredan la elección de 2024, cuyo ganador la base original omitió.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>Datos_DEFENSA_Hom_CV <span class="sc">%&gt;%</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>     <span class="fu">filter</span>(<span class="fu">is.na</span>(PartidoElectoEst)) <span class="sc">%&gt;%</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>     <span class="fu">select</span>(ESTADO, AÑO, AnoElePresEstatal) <span class="sc">%&gt;%</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>     <span class="fu">distinct</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>     <span class="fu">arrange</span>(ESTADO, AnoElePresEstatal)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 9 × 3
+  ESTADO             AÑO AnoElePresEstatal
+  &lt;chr&gt;            &lt;dbl&gt;             &lt;dbl&gt;
+1 CHIAPAS           2025              2024
+2 CIUDAD DE MEXICO  2025              2024
+3 GUANAJUATO        2025              2024
+4 JALISCO           2025              2024
+5 MORELOS           2025              2024
+6 PUEBLA            2025              2024
+7 TABASCO           2025              2024
+8 VERACRUZ          2025              2024
+9 YUCATAN           2025              2024</code></pre>
+</div>
+</div>
+<p>La ausencia de estos datos se debe a que la base original de resultados electorales registró el evento del ciclo 2024, pero omitió el partido ganador, presumiblemente por haberse actualizado antes de los cómputos oficiales definitivos.</p>
+<p>Dado que los resultados de estos comicios son de dominio público y definitivos, se procede a imputar manualmente el partido ganador para corregir este vacío de información. De las 9 entidades, el Partido Acción Nacional (PAN) retuvo Guanajuato, Movimiento Ciudadano (MC) retuvo Jalisco, y el Movimiento de Regeneración Nacional (Morena) ganó las 7 gubernaturas restantes.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Imputar los ganadores estatales de las elecciones de 2024</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>Datos_DEFENSA_Hom_CV <span class="ot">&lt;-</span> Datos_DEFENSA_Hom_CV <span class="sc">%&gt;%</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">PartidoElectoEst =</span> <span class="fu">case_when</span>(</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Si es 2024, no hay partido registrado y es Guanajuato -&gt; PAN</span></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">is.na</span>(PartidoElectoEst) <span class="sc">&amp;</span> AnoElePresEstatal <span class="sc">==</span> <span class="dv">2024</span> <span class="sc">&amp;</span> ESTADO <span class="sc">==</span> <span class="st">"GUANAJUATO"</span> <span class="sc">~</span> <span class="st">"pan-pri-prd"</span>,</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Si es 2024, no hay partido registrado y es Jalisco -&gt; MC</span></span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">is.na</span>(PartidoElectoEst) <span class="sc">&amp;</span> AnoElePresEstatal <span class="sc">==</span> <span class="dv">2024</span> <span class="sc">&amp;</span> ESTADO <span class="sc">==</span> <span class="st">"JALISCO"</span> <span class="sc">~</span> <span class="st">"mc"</span>,</span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Para el resto de los estados con NA en 2024 -&gt; Morena</span></span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">is.na</span>(PartidoElectoEst) <span class="sc">&amp;</span> AnoElePresEstatal <span class="sc">==</span> <span class="dv">2024</span> <span class="sc">~</span> <span class="st">"morena"</span>,</span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Para todos los demás registros que sí tienen dato, conservamos el valor original</span></span>
+<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> PartidoElectoEst</span>
+<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb39-18"><a href="#cb39-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-19"><a href="#cb39-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificación final de integridad tras la imputación</span></span>
+<span id="cb39-20"><a href="#cb39-20" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(Datos_DEFENSA_Hom_CV))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                AÑO                 MES              ESTADO           MUNICIPIO 
+                  0                   0                   0                   0 
+              DROGA           AMPOLLETA                KGS.                LTS. 
+                  0               47050                 439               46708 
+           UNIDADES             CVE_ENT             CVE_MUN              CVEGEO 
+              46600                   0                   0                   0 
+AnoElePresMunicipal    PartidoElectoMun   AnoElePresEstatal    PartidoElectoEst 
+                400                 400                   0                   0 </code></pre>
+</div>
+</div>
+<section id="municipios-sin-partido-electo-tras-el-cruce" class="level2" data-number="9.1">
+<h2 data-number="9.1" class="anchored" data-anchor-id="municipios-sin-partido-electo-tras-el-cruce"><span class="header-section-number">9.1</span> Municipios sin partido electo tras el cruce</h2>
+<p>Después del rolling join, <code>PartidoElectoMun</code> quedó con valores perdidos (NA) en 400 registros de incautación (0.85 % de la base). Antes de imputar cualquier valor es necesario saber <strong>por qué</strong> no hubo cruce, porque un NA puede significar cosas distintas: un error de homologación de claves, un municipio nuevo sin elección previa, o un municipio que no elige a sus autoridades por partido. Cada causa exige un tratamiento distinto, y asignar un partido sin conocerla produciría datos falsos.</p>
+<p>El siguiente diagnóstico resume los NA por estado: cuántos registros y municipios afectan y en qué años ocurren.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>NAs_Municipales <span class="ot">&lt;-</span> Datos_DEFENSA_Hom_CV <span class="sc">%&gt;%</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">is.na</span>(PartidoElectoMun))</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(NAs_Municipales)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 400</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>NAs_Municipales <span class="sc">%&gt;%</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(ESTADO) <span class="sc">%&gt;%</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">registros  =</span> <span class="fu">n</span>(),</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">municipios =</span> <span class="fu">n_distinct</span>(CVEGEO),</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">anio_min   =</span> <span class="fu">min</span>(AÑO),</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">anio_max   =</span> <span class="fu">max</span>(AÑO)</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 5
+  ESTADO          registros municipios anio_min anio_max
+  &lt;chr&gt;               &lt;int&gt;      &lt;int&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+1 BAJA CALIFORNIA        78          2     2022     2024
+2 OAXACA                322         99     2005     2025</code></pre>
+</div>
+</div>
+<p>Los NA se concentran en solo dos estados. Se omite la lista completa de municipios porque son más de 100 y lo relevante es su patrón, no cada fila.</p>
+<p>Para el caso de Oaxaca se verifica si los municipios afectados tienen <strong>alguna</strong> elección registrada en la base electoral limpia. Si no la tienen, el NA no proviene de un error de cruce (por ejemplo, una clave INEGI mal escrita), sino de que la base electoral no contiene elecciones para ellos.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>NAs_Municipales <span class="sc">%&gt;%</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ESTADO <span class="sc">==</span> <span class="st">"OAXACA"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(CVEGEO) <span class="sc">%&gt;%</span></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">sin_elecciones =</span> <span class="sc">!</span>(CVEGEO <span class="sc">%in%</span> Datos_Ele_Mun_Clean<span class="sc">$</span>CVEGEO)) <span class="sc">%&gt;%</span></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(sin_elecciones)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 2
+  sin_elecciones     n
+  &lt;lgl&gt;          &lt;int&gt;
+1 TRUE              99</code></pre>
+</div>
+</div>
+<p><strong>Resultado.</strong> Los 400 NA se dividen en dos grupos con causas distintas:</p>
+<ul>
+<li><strong>Baja California (78 registros, 0.17 %).</strong> Corresponden a San Quintín y San Felipe entre 2022 y 2024. Son municipios de reciente creación que aún no habían celebrado una elección municipal y fueron gobernados por concejos fundacionales designados por el Congreso local. Por eso no hay elección previa de la cual heredar un partido.</li>
+<li><strong>Oaxaca (322 registros, 0.68 %).</strong> Corresponden a 99 municipios que no tienen ninguna elección registrada en la base. Esto es consistente con lo que documenta Magar (2026): la mayoría de los municipios oaxaqueños dejó de elegir autoridades por voto en 1995 y las nombra por usos y costumbres, por lo que la base los excluye. Se trata de una inferencia a partir de la ausencia de elecciones, no de una verificación contra el catálogo oficial de sistemas normativos indígenas.</li>
+</ul>
+<p><strong>Decisión.</strong> Ninguno de los dos grupos se deja como NA ni se les imputa un partido de las elecciones anteriores. Dejarlos en NA los confundiría con datos faltantes cuando en realidad no existió una elección partidista, e imputarles un partido inventaría información. Se les asigna una categoría propia que describe su situación de gobierno, de modo que puedan identificarse y, si es necesario, excluirse del análisis por partido.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Concejos fundacionales de Baja California.</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="co"># El año "electoral" se iguala al año de la incautación, porque no hubo elección.</span></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>Datos_DEFENSA_Hom_CV <span class="ot">&lt;-</span> Datos_DEFENSA_Hom_CV <span class="sc">%&gt;%</span></span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">PartidoElectoMun =</span> <span class="fu">case_when</span>(</span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">is.na</span>(PartidoElectoMun) <span class="sc">&amp;</span> ESTADO <span class="sc">==</span> <span class="st">"BAJA CALIFORNIA"</span> <span class="sc">&amp;</span></span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>        MUNICIPIO <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"SAN FELIPE"</span>, <span class="st">"SAN QUINTIN"</span>) <span class="sc">~</span> <span class="st">"ConsMuniFundacional"</span>,</span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> PartidoElectoMun</span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">AnoElePresMunicipal =</span> <span class="fu">case_when</span>(</span>
+<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a>      PartidoElectoMun <span class="sc">==</span> <span class="st">"ConsMuniFundacional"</span> <span class="sc">~</span> AÑO,</span>
+<span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> AnoElePresMunicipal</span>
+<span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb47-14"><a href="#cb47-14" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Municipios de Oaxaca sin ninguna elección en la base: usos y costumbres.</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="co"># AnoElePresMunicipal se deja en NA porque no existe una elección que asignar.</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>Datos_DEFENSA_Hom_CV <span class="ot">&lt;-</span> Datos_DEFENSA_Hom_CV <span class="sc">%&gt;%</span></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">PartidoElectoMun =</span> <span class="fu">case_when</span>(</span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">is.na</span>(PartidoElectoMun) <span class="sc">&amp;</span> ESTADO <span class="sc">==</span> <span class="st">"OAXACA"</span> <span class="sc">&amp;</span></span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>        <span class="sc">!</span>(CVEGEO <span class="sc">%in%</span> Datos_Ele_Mun_Clean<span class="sc">$</span>CVEGEO) <span class="sc">~</span> <span class="st">"UsosCostumbres"</span>,</span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> PartidoElectoMun</span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificación: PartidoElectoMun debe quedar sin NA</span></span>
+<span id="cb48-13"><a href="#cb48-13" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(Datos_DEFENSA_Hom_CV))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                AÑO                 MES              ESTADO           MUNICIPIO 
+                  0                   0                   0                   0 
+              DROGA           AMPOLLETA                KGS.                LTS. 
+                  0               47050                 439               46708 
+           UNIDADES             CVE_ENT             CVE_MUN              CVEGEO 
+              46600                   0                   0                   0 
+AnoElePresMunicipal    PartidoElectoMun   AnoElePresEstatal    PartidoElectoEst 
+                322                   0                   0                   0 </code></pre>
+</div>
+</div>
+<p><strong>Limitación.</strong> Los 322 registros de <code>UsosCostumbres</code> (0.68 % de la base) corresponden a municipios rurales, en su mayoría indígenas, que quedan fuera de cualquier análisis por partido municipal. Siguen siendo plenamente válidos para el análisis estatal y federal.</p>
+</section>
+</section>
+<section id="integración-del-partido-presidencial-nivel-federal" class="level1" data-number="10">
+<h1 data-number="10"><span class="header-section-number">10</span> Integración del Partido Presidencial (Nivel Federal)</h1>
+<p>Para complementar el análisis político en sus tres niveles de gobierno, es indispensable incorporar qué partido ocupaba la Presidencia de la República en el momento de cada incautación.</p>
+<p>Dado que el titular del Ejecutivo Federal gobierna sobre todo el territorio nacional simultáneamente, este cruce no requiere emparejamiento geográfico. Basta con generar un registro de los ciclos presidenciales recientes y aplicar un cruce temporal por proximidad (<em>rolling join</em>) para que cada incautación herede el partido presidencial electo en el sexenio correspondiente.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Datos histórica de elecciones federales (2000-2024)</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>Datos_Ele_Fed <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">yr =</span> <span class="fu">c</span>(<span class="dv">2000</span>, <span class="dv">2006</span>, <span class="dv">2012</span>, <span class="dv">2018</span>, <span class="dv">2024</span>),</span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">PartidoElectoFed =</span> <span class="fu">c</span>(<span class="st">"pan"</span>, <span class="st">"pan"</span>, <span class="st">"pri"</span>, <span class="st">"morena"</span>, <span class="st">"morena"</span>))</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a><span class="co">#Cruce Federal Dinámico Solo temporal</span></span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>Datos_DEFENSA_Hom_CV <span class="ot">&lt;-</span> Datos_DEFENSA_Hom_CV <span class="sc">%&gt;%</span></span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>    Datos_Ele_Fed, </span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Busca la elección presidencial más cercana hacia atrás en el tiempo</span></span>
+<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">join_by</span>(<span class="fu">closest</span>(AÑO <span class="sc">&gt;</span> yr)) ) <span class="sc">%&gt;%</span></span>
+<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">`</span><span class="at">AnoElePresFederal</span><span class="st">`</span> <span class="ot">=</span> yr)</span>
+<span id="cb50-13"><a href="#cb50-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-14"><a href="#cb50-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificación final de integridad de toda la base (Federal, Estatal y Municipal)</span></span>
+<span id="cb50-15"><a href="#cb50-15" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(Datos_DEFENSA_Hom_CV))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                AÑO                 MES              ESTADO           MUNICIPIO 
+                  0                   0                   0                   0 
+              DROGA           AMPOLLETA                KGS.                LTS. 
+                  0               47050                 439               46708 
+           UNIDADES             CVE_ENT             CVE_MUN              CVEGEO 
+              46600                   0                   0                   0 
+AnoElePresMunicipal    PartidoElectoMun   AnoElePresEstatal    PartidoElectoEst 
+                322                   0                   0                   0 
+  AnoElePresFederal    PartidoElectoFed 
+                  0                   0 </code></pre>
+</div>
+</div>
+</section>
+<section id="guardar-la-base-de-datos" class="level1" data-number="11">
+<h1 data-number="11"><span class="header-section-number">11</span> Guardar la base de datos</h1>
+<p>Esta base de datos por ende tiene la información por refistro de incautación homologado por Estado, Municipio y partido electo a nivel estatal y municipal en donde fué la incautación.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>ruta_guardado <span class="ot">&lt;-</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"processed"</span>, <span class="st">"Datos_DEFENSA_Politica_Homologada.csv"</span>)</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(Datos_DEFENSA_Hom_CV, ruta_guardado)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-page-right">
+  <div class="nav-page nav-page-previous">
+      <a href="../notebooks/02_Datos_Municipales.html" class="pagination-link" aria-label="Homologación de Datos Municipales">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Homologación de Datos Municipales</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../notebooks/04_Analisis_Esp_Temp_Est_Mun.html" class="pagination-link" aria-label="Análisis Espacial, Temporal Estatal y Municipal">
+        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Análisis Espacial, Temporal Estatal y Municipal</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
